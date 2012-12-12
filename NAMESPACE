@@ -1,0 +1,12 @@
+# Tell R to load the shared object <BayesVarSel.so>.
+useDynLib("BayesVarSel")
+
+import(snow, MASS)
+
+# Define which functions people can see.
+export(Bvs, PBvs, GibbsBvs, plotBvs) 
+S3method(summary, Bvs)
+S3method(print, Bvs)
+S3method(predict, Bvs)
+S3method(print, summary.Bvs)
+S3method(print, Bvs.predict)

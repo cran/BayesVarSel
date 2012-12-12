@@ -1,0 +1,97 @@
+\name{PBvs}
+\alias{PBvs}
+\title{
+Bayesian Variable Selection for linear models using parallel computation.
+}
+\description{
+Exact computation of summaries of the posterior distribution using parallel computation. The function \code{PBvs} is just a parallelized version of the function \code{\link[BayesVarSel]{Bvs}}.
+}
+\usage{
+PBvs(formula, data, prior.betas = "Robust",
+     prior.models = "Constant", n.keep, n.nodes = 2)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{formula }{Formula defining the most complex linear model considered in the analysis (package forces the intercept to be included)}
+  \item{data }{data frame}
+  \item{prior.betas }{Prior distribution for regression parameters within each model. Possible choices include "Robust", "Liangetal", "gZellner" and "ZellnerSiow"}
+  \item{prior.models }{Prior distribution over the model space. Possible choices are "Constant" and "ScottBerger"}
+  \item{n.keep }{How many of the most probable models are to be kept?}
+  \item{n.nodes }{Number of nodes to be used in the computation}
+}
+\details{
+This function takes advantage of the library \code{snow} to distribute the models in the model space
+throughout the number of nodes available. Its intended use is for moderately large model spaces (p>=20).
+Apart from this, the details in \code{\link[BayesVarSel]{Bvs}} also apply here.
+}
+\value{\code{PBvs} returns an object of class \code{Bvs} with the following elements:
+\item{time }{The internal time consumed in solving the problem}
+\item{lm }{The \code{lm} class object that results when the model defined by \code{formula} is fitted by \code{lm}}
+\item{variables }{The name of all the potential explanatory variables.}
+\item{n }{Number of observations}
+\item{p }{Total number of explanatory variables (including the intercept) in the most complex model}
+\item{HPMbin }{The binary expression of the Highest Posterior Probability model}
+\item{modelsprob }{A \code{data.frame} which summaries the \code{n.keep} most probable, a posteriori models, and their associated probability.}
+\item{inclprob }{A \code{data.frame} with the inclusion probabilities of all the variables.}
+\item{jointinclprob }{A \code{data.frame} with the joint inclusion probabilities of all the variables.}
+\item{postprobdim }{Posterior probabilities of the dimension of the true model}
+\item{betahat }{The model-averaged estimator of the regression parameters.}
+\item{call }{The \code{call} to the function}
+\item{method }{\code{parallel}} 
+}
+\author{
+Gonzalo Garcia-Donato and Anabel Forte
+
+Maintainer: <anabel.forte@uji.es>
+}
+\references{
+
+  Bayarri, M.J., Berger, J.O., Forte, A. and Garcia-Donato, G. (2012) Criteria for Bayesian Model choice with Application to Variable Selection. The Annals of Statistics. 40: 1550-1557
+
+  Liang, F., Paulo, R., Molina, G., Clyde, M. and  Berger,
+  J.O. (2008) Mixtures of  g-priors for Bayesian Variable
+  Selection. Journal of the American Statistical Association. 103:410-423.%  \cr \url{http://dx.doi.org/10.1198/016214507000001337}
+  
+  Zellner, A. and Siow, A. (1980). Posterior Odds Ratio for Selected Regression Hypotheses. In Bayesian Statistics 1 (J.M. Bernardo, M. H. DeGroot, D. V. Lindley and A. F. M. Smith, eds.) 585-603. Valencia: University Press. 
+  
+  Zellner, A. and Siow, A. (1984). Basic Issues in Econometrics. Chicago: University of
+Chicago Press.
+ 
+  Zellner, A. (1986). On Assessing Prior Distributions and Bayesian Regression Analysis with g-prior Distributions. In Bayesian Inference and Decision techniques: Essays in Honor of Bruno de Finetti (A. Zellner, ed.) 389-399. Edward Elgar Publishing
+Limited. 
+
+}
+
+\keyword{ package }
+\seealso{
+\code{\link[BayesVarSel]{plotBvs}} for different descriptive plots of the results.
+
+\code{\link[BayesVarSel]{GibbsBvs}} which implements a heuristic approximation to the problem based on Gibbs sampling.
+}
+
+\examples{
+\dontrun{
+#Analysis of Crime Data
+#load data
+
+data(UScrime)
+
+#Default arguments are Robust prior for the regression parameters
+#and constant prior over the model space
+#Here we keep the 1000 most probable models a posteriori:
+#The computation over the model space is distributed over two
+#cores:
+crime.Bvs<- PBvs(formula="y~.", data=UScrime, n.keep=1000, 
+n.nodes=2)
+
+#A look at the results:
+crime.Bvs
+
+summary(crime.Bvs)
+
+#An image plot with the joint inlcusion 
+#probabilities:
+plotBvs(crime.Bvs, option="joint")}
+}
+% Add one or more standard keywords, see file 'KEYWORDS' in the
+% R documentation directory.
