@@ -1024,9 +1024,9 @@ void RobustSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfin
 	
 	double info=pow(2,p-1);
 	
-	Rprintf("The problem has %d variables and %d observations\n", p, n);
-	Rprintf("The whole problem would have %f different competing models\n", info);
-	Rprintf("The %d models with more probability are kept\n", SAVE);
+	//Rprintf("The problem has %d variables and %d observations\n", p, n);
+	//Rprintf("The whole problem would have %f different competing models\n", info);
+	//Rprintf("The %d models with more probability are kept\n", SAVE);
 	
 	//Data files: (R version)
 	char strtmp[100] = ""; 
