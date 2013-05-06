@@ -1,4 +1,4 @@
-3592e676be789300f7368d54c0919cd3 *DESCRIPTION
+0de67dfecf3f758b6425989595341a39 *DESCRIPTION
 d39d482f55cd35267e880f59d48ae442 *NAMESPACE
 5befdd89b4ddea8d81ba9cd8da8bcbee *R/Bvs.R
 1afe134f77bdf0d81aeefa396f835ad1 *R/GibbsBvs.R
@@ -18,7 +18,7 @@ aa2c1d0afcb86916d868837495853203 *man/GibbsBvs.Rd
 ec86814de86ef999b70ea16247da8b5e *man/Hald.Rd
 6114c296119712cafdd0792dd7c323fd *man/Ozone35.Rd
 365375d76c7c3abc0dc5cd4cf8c81c78 *man/PBvs.Rd
-f898340bcd6aaba6682f1534e2a05941 *man/bayesvarsel-package.rd
+6c850699a3004fef04dd5774b32d17bc *man/bayesvarsel-package.rd
 3b72c2782f994265df51fd43c0b3de50 *man/plotbvs.rd
 37ab57d9cec6fa4e0bea53d47ef8b33f *man/predict.Bvs.Rd
 6c7ecf7f9e9b7af57d31495800a858c6 *src/Gibbsauxiliaryfuncs.c

@@ -14,7 +14,7 @@ The default implementation takes advantage of a closed-form expression for the p
 \tabular{ll}{
 Package: \tab BayesVarSel\cr
 Type: \tab Package\cr
-Version: \tab 1.4\cr
+Version: \tab 1.5\cr
 Date: \tab 2012-11-12\cr
 License: \tab GPL-2\cr
 }
