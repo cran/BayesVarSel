@@ -19,25 +19,32 @@
 
 
 // Gonzalo Garcia-Donato and Anabel Forte, 2010
-// The Bayes factor obtained with the the g-prior (in favour of 
-// a model and against the null with only the intercept)
+// 17-jan-14 Now with the null model not necesarily being the intercept
+//The null model contains k0 parameters (k0=1 if only intercept)
+//and the complex model contains k2 parameters
 
-double gBF21fun(int n, int k2, double Q)
+
+
+/* -----g-prior-------*/
+
+// The Bayes factor obtained with the the g-prior (in favour of
+// a model with k2 regressors and against the null with k0)
+
+double gBF21fun(int n, int k2, int k0, double Q)
 {
 	
 		double BF21=0.0;
-    BF21 = exp(((n-k2)/2.0)*log(1.0+n)-((n-1.0)/2.0)*log(1.0+n*Q));
+    BF21 = exp(((n-k2)/2.0)*log(1.0+n)-((n-k0)/2.0)*log(1.0+n*Q));
 		return BF21;
 	
 }
 
 
 
-/*-------------Robust--------------------*/
-//Sirve para calcular con o sin tess, cuando es sin tess el ultimo objeto tiene que ser n.
+/*------Robust-------*/
 
+//The Bayes Factor obtained with the robust prior of Bayarri et al 2012.
 
-/*----------funcion auxiliar para la hypergeo cuando z esta muy cerca de 1------*/
 
 /*Structure for Parameters*/
 struct parrob {
@@ -51,24 +58,22 @@ struct parrob {
 /*auxiliar functions for integration */
 
 double robint_aux (double x, void *p){
-	struct parrob * params=(struct parrob *)p;/*Defino un puntero a una estructura del tipo par*/
-	/*Inicializo el puntero en la dirección de memoria en la que están los parametros que le estoy
-	 pasando, p obligando a que sean de tipo struct par*/
-	
-	/*Defino los parametros que son los que estaran en la estructura que le pasamos*/
+    /* pointer to a structure of type par. */
+	struct parrob * params=(struct parrob *)p;
+    
+    /*DDefine the parameters included at the structure*/
 	double a=(params->a);
 	double b=(params->b);
 	double c=(params->c);
 	double z=(params->z);
 	
-	/*Calculo el valor de la función y lo devuelvo*/
+	/*return the argument for integration*/
 	double l=pow(x,b-1.0)*pow((1.0-x),c-b-1.0)*pow((1.0-x*z),-a);
-	//printf("valor de la funcion %f\n",l);
 	return l;
 }
 
 
-/*Integrated functions the arguments will be n,k,Qi0*/
+/* Integrated functions the arguments will be n,k,Qi0 */
 double robint (double a,double b, double c,double z){
 	/*guardamos espacio de memoria para realizar la integracion, este 10000 es el que luego va en la función
 	 de integracion*/
@@ -97,9 +102,9 @@ double robint (double a,double b, double c,double z){
 }
 
 
-/*----Caculo de los factores bayes robustos------*/
+/* Robust Bayes Factor for main.c*/
 
-double RobustBF21fun(int n, int k2, double Q)
+double RobustBF21fun(int n, int k2, int k0, double Q)
 {
 
 	double  T1=0.0, T2=0.0, T3=0.0;
@@ -107,17 +112,17 @@ double RobustBF21fun(int n, int k2, double Q)
 	double R1=0.0;
 	double z=0.0;
 	double rho=0.0;
-  rho=pow((k2+1.0),-1.0);
+  rho=pow(k2,-1.0);
   
   double k2aux=0.0;
-  k2aux=k2+1.0;
+  k2aux=k2-k0+1.0;//equivalently k2aux=ki+1
   
   double Qaux=0.0;
   Qaux=pow(Q,-1.0);
 	
-	// Qaux aquí representa Q_0i
-	T1=pow(Qaux,(n-1.0)/2.0);
-	T2=pow(rho*(n+1),-(k2/2.0))/k2aux;
+	// Qaux means Q_0i
+	T1=pow(Qaux,(n-k0)/2.0);
+	T2=pow(rho*(n+1),-((k2-k0))/2.0)/k2aux;
 	//for the hypergeometric factor we disdtinguish whether the argument is
 	//<-1 or not
 	
@@ -129,19 +134,19 @@ double RobustBF21fun(int n, int k2, double Q)
 	
 	if (arg>=-1.0)
 	{
-		T3=gsl_sf_hyperg_2F1(k2aux/2.0, (n-1.0)/2.0, (k2aux/2.0)+1.0, arg);
+		T3=gsl_sf_hyperg_2F1(k2aux/2.0, (n-k0)/2.0, (k2aux/2.0)+1.0, arg);
 	}
 	else 
 	{
 		z=arg/(arg-1.0);
-		STATUS=gsl_sf_hyperg_2F1_e((n-1.0)/2.0, 1.0, (k2aux/2.0)+1.0, z,&result);
+		STATUS=gsl_sf_hyperg_2F1_e((n-k0)/2.0, 1.0, (k2aux/2.0)+1.0, z,&result);
 		
 		
-		if (STATUS==0) T3=pow((1.0-arg),(1.0-n)/2.0)*result.val; //succed
+		if (STATUS==0) T3=pow((1.0-arg),(k0-n)/2.0)*result.val; //succed
 		else //gsl_hyper failed, then numerical approx of the log(2F1)
 		{
 							
-			T3=pow((1.0-arg),(1.0-n)/2.0)*robint((n-1.0)/2.0,1.0, (k2aux/2.0)+1.0, z);
+			T3=pow((1.0-arg),(k0-n)/2.0)*robint((n-k0)/2.0,1.0, (k2aux/2.0)+1.0, z);
 					}
 	}
 	
@@ -151,53 +156,41 @@ double RobustBF21fun(int n, int k2, double Q)
 	return(R1);
 }
 
-/* FUNCION QUE USAREMOS EN EL main.c*/
-/* Llamada al factor bayes robusto con el Rho del paper 1/(ki+k0) */
-/* NO sera necesaria, la defino arriba más arregladita 
-double RobustBF21fun(int n, int k2, double Q)
-{
-    double RobustBF21=0.0; 
-    double rho=0.0; 
-    rho = pow((k2+1.0),-1.0);
-    RobustBF21 = Robustfun((double)k2, (double)n, Q, rho, n);
-    return (RobustBF21);
-    
-}
-*/
 
+/*--------LIANG-------*/
 
-/*---------------------LIANG----------------*/
 /*Structure for Parameters, for Liang and ZS*/
 struct par {
 	double n;
 	double k_i;
+	double k_0;
 	double Q_i0;
 };
 
-
+/*auxiliar function for the argument of the integration*/
 double liang_aux (double x, void *p){
-	struct par * params=(struct par *)p;/*Defino un puntero a una estructura del tipo par*/
-	/*Inicializo el puntero en la dirección de memoria en la que están los parametros que le estoy
-	 pasando, p obligando a que sean de tipo struct par*/
+	/* pointer to a structure of type par. */
+    struct par * params=(struct par *)p;
 	
-	/*Defino los parametros que son los que estaran en la estructura que le pasamos*/
+	/*Define the parameters included at the structure */
 	double n=(params->n);
-	double k=(params->k_i);
+	double k=(params->k_i);/*it will be k2*/
+	double kk0=(params->k_0);	
 	double Q=(params->Q_i0);
 	
 	/*Calculo el valor de la función y lo devuelvo*/
-	double l=pow((1.0+x), (n-1.0-k)/2.0)*pow((1.0+Q*x), (1.0-n)/2)*(1.0/(2.0*n))*pow(1.0+x/n, -1.5);
+	double l=pow((1.0+x), (n-k)/2.0)*pow((1.0+Q*x), (kk0-n)/2)*(1.0/(2.0*n))*pow(1.0+x/n, -1.5);
 	
 	return l;
 }
 
-/*Esta es igual que la anterior pero para el FB de Liang*/
-double liang (double n,double k, double Q){
+/*Function for integrating*/
+double liang (double n, double k, double k0, double Q){
 	gsl_integration_workspace * w=gsl_integration_workspace_alloc(10000);
 	
 	double result=0.0, error=0.0;
 	
-	struct par  params={n,k,Q};
+	struct par  params={n,k,k0,Q};
 	
 	gsl_function F;
 	F.function = &liang_aux;
@@ -211,18 +204,17 @@ double liang (double n,double k, double Q){
 }
 
 
-
-/* FUNCION QUE USAREMOS EN EL main.c*/
-double LiangBF21fun(int n, int k2, double Q)
+/* Liang Bayes Factor for main.c*/
+double LiangBF21fun(int n, int k2, int k0, double Q)
 {
     double LiangBF21=0.0;
-    LiangBF21 = liang((double) n, (double) k2, Q);
+    LiangBF21 = liang((double) n, (double) k2, (double) k0, Q);
     return LiangBF21;
     
 }
 
 
-/* ---------------JZS------------------*/
+/*-------JZS-------*/
 
 
 /*auxiliar functions for integration */
@@ -234,50 +226,48 @@ double zell_aux (double x, void *p){
 	
 	/*Defino los parametros que son los que estaran en la estructura que le pasamos*/
 	double n=(params->n);
-	double k=(params->k_i);
+	double k=(params->k_i);/*it will be k2*/
+	double kk0=(params->k_0);	
 	double Q=(params->Q_i0);
 	
 	/*Calculo el valor de la función y lo devuelvo*/
-	double l=pow((1.0+x), (n-1.0-k)/2.0)*pow((1.0+Q*x), (1.0-n)/2)*pow((n/(2.0*M_PI)),0.5)*pow(x, -1.5)*exp(-n/(2.0*x));
+	double l=pow((1.0+x), (n-k)/2.0)*pow((1.0+Q*x), (kk0-n)/2)*pow((n/(2.0*M_PI)),0.5)*pow(x, -1.5)*exp(-n/(2.0*x));
 	
 	return l;
 }
 
 
 /*Integrated functions the arguments will be n,k,Qi0*/
-double zell (double n,double k, double Q){
-	/*guardamos espacio de memoria para realizar la integracion, este 10000 es el que luego va en la función
-	 de integracion*/
+double zell (double n,double k, double k0, double Q){
+	/*allocate space por integration*/
 	gsl_integration_workspace * w=gsl_integration_workspace_alloc(10000);
 	
 	double result=0.0, error=0.0;
 	
-	/*Ponemos los parametros en la forma que necesitamos para la funcion*/
-	struct par  params={n,k,Q};
+	/*set parameters in the appropiate structure*/
+	struct par  params={n,k,k0,Q};
 	
-	/*Definimos cual es la funcion que vamos a usar y le pasamos los parametros*/
+	/*define the function and pass parameters*/
 	gsl_function F;
 	F.function = &zell_aux;
 	F.params = &params;
 	
-	/*integramos y guardamos el resultado en result y el error en error*/
+	/*integrate and save result and error*/
 	gsl_integration_qagiu(&F, 0, 0, 1e-9,10000,w,&result,&error);
 	
-	//printf("errorJZS=%f \n", error);
-	/*Liberamos el espacio de trabajo*/
+	/*free space*/
 	gsl_integration_workspace_free (w);
 	
-	/*devolvemos el resultado*/
 	return result;
 }
 
 
 
 /* FUNCION QUE USAREMOS EN EL main.c*/
-double ZSBF21fun(int n, int k2, double Q)
+double ZSBF21fun(int n, int k2, int k0, double Q)
 {
     double ZSBF21=0.0;
-    ZSBF21 = zell ((double) n,(double) k2, Q);
+    ZSBF21 = zell ((double) n,(double) k2, (double) k0, Q);
     return ZSBF21;
     
 }
