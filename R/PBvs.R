@@ -1,7 +1,7 @@
-PBvs <-
+ PBvs <-
 function(formula, data, prior.betas="Robust", prior.models="Constant", n.keep, n.nodes=2){
 
-require(snow)#package for parallel computation
+require(parallel)#package for parallel computation
 
 cl <- makeCluster(n.nodes, type = "SOCK") 
 
@@ -137,14 +137,14 @@ thisNormConstantPrior<- scan(file=paste(fNormConstantPrior,i,sep=""), quiet=T)
 #next is the Bayes factor times the (unnormalized) prior for this model
 #(see the main.c code to see how is the unnormalized prior). So, if
 #the unnormalized prior is=1, then next is the Bayes factor*1 and so on
-thisUnnorPostProb<- read.table(file=paste(fPostProb,i,sep=""))[[1]]*thisNormConstant*thisNormConstantPrior
+thisUnnorPostProb<- read.table(file=paste(fPostProb,i,sep=""),colClasses="numeric")[[1]]*thisNormConstant*thisNormConstantPrior
 
 thisMostProbModels<- read.table(file=paste(fMostProbModels,1,sep=""), colClasses="character")[[1]]
 
 for (i in 2:n.nodes){
 	readNormConstant<- scan(file=paste(fNormConstant,i,sep=""), n=1, quiet=T)
         readNormConstantPrior<- scan(file=paste(fNormConstantPrior,i,sep=""), quiet=T)
-	readUnnorPostProb<- read.table(file=paste(fPostProb,i,sep=""))[[1]]*readNormConstant*readNormConstantPrior
+	readUnnorPostProb<- read.table(file=paste(fPostProb,i,sep=""),colClasses="numeric")[[1]]*readNormConstant*readNormConstantPrior
 	readMostProbModels<- read.table(file=paste(fMostProbModels,i,sep=""), colClasses="character")[[1]]
 
 	jointUnnorPostProb<- c(readUnnorPostProb, thisUnnorPostProb) 
@@ -160,39 +160,39 @@ accum.InclusionProb<- read.table(file=paste(fInclusionProb,i,sep=""))[[1]]*0
 for (i in 1:n.nodes){
 	readNormConstant<- scan(file=paste(fNormConstant,i,sep=""), n=1, quiet=T)
     readNormConstantPrior<- scan(file=paste(fNormConstantPrior,i,sep=""), quiet=T)
-	accum.InclusionProb<- accum.InclusionProb+read.table(file=paste(fInclusionProb,i,sep=""))[[1]]*readNormConstant*readNormConstantPrior
+	accum.InclusionProb<- accum.InclusionProb+read.table(file=paste(fInclusionProb,i,sep=""),colClasses="numeric")[[1]]*readNormConstant*readNormConstantPrior
 }
 
 accum.InclusionProb<- accum.InclusionProb/(D*E)
 
 #The joint inclusion probs:
-accum.JointInclusionProb<- as.matrix(read.table(file=paste(fJointInclusionProb,i,sep="")))*0
+accum.JointInclusionProb<- as.matrix(read.table(file=paste(fJointInclusionProb,i,sep=""),colClasses="numeric"))*0
 for (i in 1:n.nodes){
 	readNormConstant<- scan(file=paste(fNormConstant,i,sep=""), n=1, quiet=T)
     readNormConstantPrior<- scan(file=paste(fNormConstantPrior,i,sep=""), quiet=T)
 	accum.JointInclusionProb<- accum.JointInclusionProb+
-	  as.matrix(read.table(file=paste(fJointInclusionProb,i,sep="")))*readNormConstant*readNormConstantPrior
+	  as.matrix(read.table(file=paste(fJointInclusionProb,i,sep=""),colClasses="numeric"))*readNormConstant*readNormConstantPrior
 }
 
 accum.JointInclusionProb<- accum.JointInclusionProb/(D*E)
 #-----
 
 #The dimension probabilities
-accum.ProbDimension<- read.table(file=paste(fProbDimension,i,sep=""))[[1]]*0
+accum.ProbDimension<- read.table(file=paste(fProbDimension,i,sep=""),colClasses="numeric")[[1]]*0
 for (i in 1:n.nodes){
 	readNormConstant<- scan(file=paste(fNormConstant,i,sep=""), n=1, quiet=T)
         readNormConstantPrior<- scan(file=paste(fNormConstantPrior,i,sep=""), quiet=T)
-	accum.ProbDimension<- accum.ProbDimension+read.table(file=paste(fProbDimension,i,sep=""))[[1]]*readNormConstant*readNormConstantPrior
+	accum.ProbDimension<- accum.ProbDimension+read.table(file=paste(fProbDimension,i,sep=""),colClasses="numeric")[[1]]*readNormConstant*readNormConstantPrior
 }
 
 accum.ProbDimension<- accum.ProbDimension/(D*E)
 
-betahat<- read.table(file=paste(fBetahat,i,sep=""))[[1]]*0
+betahat<- read.table(file=paste(fBetahat,i,sep=""),colClasses="numeric")[[1]]*0
 ac<- 0
 for (i in 1:n.nodes){
     readNormConstant<- scan(file=paste(fNormConstant,i,sep=""), n=1, quiet=T)
     readNormConstantPrior<- scan(file=paste(fNormConstantPrior,i,sep=""), quiet=T)
-    betahat<- betahat+read.table(file=paste(fBetahat,i,sep=""))[[1]]*readNormConstant*readNormConstantPrior
+    betahat<- betahat+read.table(file=paste(fBetahat,i,sep=""),colClasses="numeric")[[1]]*readNormConstant*readNormConstantPrior
 	ac<- ac+readNormConstant
 	}
 betahat<- betahat/(D*E)
@@ -226,12 +226,12 @@ integer.base.b_C<-function(x, k){
 
 
 tempdir <- wd
-models <- as.vector(read.table(paste(tempdir,"/MostProbModels",sep="")))
-prob <- as.vector(read.table(paste(tempdir,"/PostProb",sep="")))
-incl <- as.vector(read.table(paste(tempdir,"/InclusionProb",sep="")))
-joint <- as.matrix(read.table(paste(tempdir,"/JointInclusionProb",sep="")))
-dimen <- as.vector(read.table(paste(tempdir,"/ProbDimension",sep="")))
-betahat<- as.vector(read.table(paste(wd,"/betahat",sep="")))
+models <- as.vector(read.table(paste(tempdir,"/MostProbModels",sep=""),colClasses="character"))
+prob <- as.vector(read.table(paste(tempdir,"/PostProb",sep=""),colClasses="numeric"))
+incl <- as.vector(read.table(paste(tempdir,"/InclusionProb",sep=""),colClasses="numeric"))
+joint <- as.matrix(read.table(paste(tempdir,"/JointInclusionProb",sep=""),colClasses="numeric"))
+dimen <- as.vector(read.table(paste(tempdir,"/ProbDimension",sep=""),colClasses="numeric"))
+betahat<- as.vector(read.table(paste(wd,"/betahat",sep=""),colClasses="numeric"))
 
 #Most probable models
 mod.mat <- as.data.frame(cbind(t(rep(0,(p+1)))))
@@ -241,7 +241,7 @@ names(mod.mat)<-c(namesx,"prob")
 N<-n.keep
 
 for(i in 1:N){
-  mod.mat[i,2:p]<-integer.base.b_C(models[i,1],(p-1))
+  mod.mat[i,2:p]<-integer.base.b_C(as.numeric(models[i,1]),(p-1))
   mod.mat[i,1]<-1
   varnames.aux<-rep("",p)
   varnames.aux[mod.mat[i,1:p]==1]<-"*"
@@ -261,7 +261,7 @@ result$lm<-lm.obj
 result$variables <- namesx
 result$n <- n
 result$p <- p
-result$HPMbin <- integer.base.b_C(models[1,1],(p-1))
+result$HPMbin <- integer.base.b_C(as.numeric(models[1,1]),(p-1))
 result$modelsprob<- mod.mat
 result$inclprob<- inclusion
 result$jointinclprob<- data.frame(joint[2:p,2:p],row.names=namesx[-1])

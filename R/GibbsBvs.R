@@ -115,11 +115,11 @@ result<- switch(method,
   
 
 
-models <- as.vector(read.table(paste(wd,"/MostProbModels",sep="")))
-incl <- as.vector(read.table(paste(wd,"/InclusionProb",sep="")))
-joint <- as.matrix(read.table(paste(wd,"/JointInclusionProb",sep="")))
-dimen <- as.vector(read.table(paste(wd,"/ProbDimension",sep="")))
-betahat<- as.vector(read.table(paste(wd,"/betahat",sep="")))
+models <- as.vector(read.table(paste(wd,"/MostProbModels",sep=""),colClasses="numeric"))
+incl <- as.vector(read.table(paste(wd,"/InclusionProb",sep=""),colClasses="numeric"))
+joint <- as.matrix(read.table(paste(wd,"/JointInclusionProb",sep=""),colClasses="numeric"))
+dimen <- as.vector(read.table(paste(wd,"/ProbDimension",sep=""),colClasses="numeric"))
+betahat<- as.vector(read.table(paste(wd,"/betahat",sep=""),colClasses="numeric"))
 #Highest probability model
 mod.mat <- as.data.frame(t(models))
 

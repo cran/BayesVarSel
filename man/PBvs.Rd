@@ -20,7 +20,7 @@ PBvs(formula, data, prior.betas = "Robust",
   \item{n.nodes }{Number of nodes to be used in the computation}
 }
 \details{
-This function takes advantage of the library \code{snow} to distribute the models in the model space
+This function takes advantage of the library \code{parallel} to distribute the models in the model space
 throughout the number of nodes available. Its intended use is for moderately large model spaces (p>=20).
 Apart from this, the details in \code{\link[BayesVarSel]{Bvs}} also apply here.
 }

@@ -125,12 +125,12 @@ integer.base.b_C<-function(x, k){
 }
 
 #read the files given by C
-models <- as.vector(read.table(paste(wd,"/MostProbModels",sep="")))
-prob <- as.vector(read.table(paste(wd,"/PostProb",sep="")))
-incl <- as.vector(read.table(paste(wd,"/InclusionProb",sep="")))
-joint <- as.matrix(read.table(paste(wd,"/JointInclusionProb",sep="")))
-dimen <- as.vector(read.table(paste(wd,"/ProbDimension",sep="")))
-betahat<- as.vector(read.table(paste(wd,"/betahat",sep="")))
+models <- as.vector(read.table(paste(wd,"/MostProbModels",sep=""),colClasses="numeric"))
+prob <- as.vector(read.table(paste(wd,"/PostProb",sep=""),colClasses="numeric"))
+incl <- as.vector(read.table(paste(wd,"/InclusionProb",sep=""),colClasses="numeric"))
+joint <- as.matrix(read.table(paste(wd,"/JointInclusionProb",sep=""),colClasses="numeric"))
+dimen <- as.vector(read.table(paste(wd,"/ProbDimension",sep=""),colClasses="numeric"))
+betahat<- as.vector(read.table(paste(wd,"/betahat",sep=""),colClasses="numeric"))
 
 
 # data.frame with Most probable models

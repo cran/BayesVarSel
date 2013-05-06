@@ -1,8 +1,8 @@
-294be88458ae3eaee9b8dfcf82b0dfbe *DESCRIPTION
-df35f64d58c647b6ae8c3fd68385ac42 *NAMESPACE
-b48f43ad9bad8987708f4ea4b4e454de *R/Bvs.R
-6bdfe8eef8167079e6831445eb5724a7 *R/GibbsBvs.R
-42293966d2501d3cd536a26f8cc1f75f *R/PBvs.R
+f2ec17c249e8b5486453a8f7b04d7d2f *DESCRIPTION
+d39d482f55cd35267e880f59d48ae442 *NAMESPACE
+15b5205f4f97019ff85b61f667443469 *R/Bvs.R
+94dbe60a8ccab24a582f58992f233b92 *R/GibbsBvs.R
+858f335dca73f01d7830a3b6c3e59fb6 *R/PBvs.R
 f3e36c523e6d99bcd6ebd62c5e03979b *R/plotBvs.R
 c00982c27601f0e6089c8cdae496bd15 *R/predict.Bvs.R
 5531f21a4caa15308682d97400c06485 *R/print.Bvs.R
@@ -17,7 +17,7 @@ c2e1a86f6175012758c8be77a768eb8b *demo/BayesVarSel.Hald.R
 c99de7a817ade8d18c69752cb825edf0 *man/GibbsBvs.Rd
 ec86814de86ef999b70ea16247da8b5e *man/Hald.Rd
 993277d092414b03138cf9fb4bf6f809 *man/Ozone35.Rd
-cdceef7646b9f693431aac59d02da206 *man/PBvs.Rd
+cddd757d1e7786f7e9cadd31478ee34b *man/PBvs.Rd
 cb391ccd3f753dd562131cc2934c54af *man/bayesvarsel-package.rd
 3b72c2782f994265df51fd43c0b3de50 *man/plotbvs.rd
 c34b87281457a3afd4a9cfc7d52d1f72 *man/predict.Bvs.Rd

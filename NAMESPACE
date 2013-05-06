@@ -1,7 +1,7 @@
 # Tell R to load the shared object <BayesVarSel.so>.
 useDynLib("BayesVarSel")
 
-import(snow, MASS)
+import(parallel, MASS)
 
 # Define which functions people can see.
 export(Bvs, PBvs, GibbsBvs, plotBvs) 
