@@ -19,11 +19,12 @@ astMPM <- rbind("*",astMPM)
 
 incl.prob<-z$inclprob
 incl.prob <- rbind(1,incl.prob)
-summ.Bvs <- cbind(ans$coefficients,incl.prob,astHPM,astMPM)
-dimnames(summ.Bvs)<- list(names(z$lm$coefficients),c("Estimate","Incl.prob.","HPM","MPM"))
+summ.Bvs <- cbind(incl.prob,astHPM,astMPM)
+dimnames(summ.Bvs)<- list(names(z$lm$coefficients),c("Incl.prob.","HPM","MPM"))
 
 ans$summary<-summ.Bvs  
 ans$method <- z$method
+ans$call<-z$call
 class(ans) <- "summary.Bvs"
 ans
 

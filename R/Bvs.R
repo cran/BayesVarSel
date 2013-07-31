@@ -1,5 +1,5 @@
 Bvs <-
-function(formula, data, prior.betas="Robust", prior.models="Constant", n.keep, time.test=TRUE){
+function(formula, data, prior.betas="Robust", prior.models="Constant", n.keep=1, time.test=TRUE){
 #Let's define the result 
 result<- list()
 
@@ -7,6 +7,18 @@ result<- list()
 wd<- tempdir()
 #remove all the previous documents in the working directory
 unlink(paste(wd,"*",sep="/"))
+
+ cl <- match.call()
+ mf <- match.call(expand.dots = FALSE)
+ m <- match(c("formula", "data"), names(mf), 0L)
+ mf <- mf[c(1L, m)]
+ mf$drop.unused.levels <- TRUE
+ mf[[1L]] <- as.name("model.frame")
+ mf <- eval(mf, parent.frame())
+ 
+
+data<-mf
+
 
 #Create the files with the design matrix and the dependent values
 lm.obj = lm(formula, data, y=TRUE, x=TRUE)
@@ -20,6 +32,7 @@ p<- dim(X)[2]#Dimension of the full model including the intercept
 n<- dim(X)[1]#Number of observations
 
 #check if the number of models to save is correct
+
 if(n.keep>2^(p-1))
   stop(paste("The number of models to keep (",n.keep, ") is larger than the total number of models (",2^(p-1),")",sep=""))
 

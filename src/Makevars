@@ -4,7 +4,7 @@
 
 #BayesVarSel depends on gsl (GNU Scientific Library). 
 
-CFLAGS = -g
+
 
 PKG_LIBS=-L/usr/local/lib -lgsl -lgslcblas -lm
 

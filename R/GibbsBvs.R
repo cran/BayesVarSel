@@ -7,6 +7,17 @@ wd<- tempdir()
 unlink(paste(wd,"*",sep="/"))
 
 #Create the files with the design matrix and the dependent values
+cl <- match.call()
+mf <- match.call(expand.dots = FALSE)
+m <- match(c("formula", "data"), names(mf), 0L)
+mf <- mf[c(1L, m)]
+mf$drop.unused.levels <- TRUE
+mf[[1L]] <- as.name("model.frame")
+mf <- eval(mf, parent.frame())
+
+
+data<-mf
+
 lm.obj = lm(formula, data, y=TRUE, x=TRUE)
 Y<- lm.obj$y
 X<- lm.obj$x

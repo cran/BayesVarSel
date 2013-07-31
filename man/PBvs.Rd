@@ -1,10 +1,10 @@
 \name{PBvs}
 \alias{PBvs}
 \title{
-Bayesian Variable Selection for linear models using parallel computation.
+Bayesian Variable Selection for linear regression models using parallel computing.
 }
 \description{
-Exact computation of summaries of the posterior distribution using parallel computation. The function \code{PBvs} is just a parallelized version of the function \code{\link[BayesVarSel]{Bvs}}.
+\code{PBvs} is a parallelized version of \code{\link[BayesVarSel]{Bvs}}.
 }
 \usage{
 PBvs(formula, data, prior.betas = "Robust",
@@ -12,17 +12,18 @@ PBvs(formula, data, prior.betas = "Robust",
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{formula }{Formula defining the most complex linear model considered in the analysis (package forces the intercept to be included)}
-  \item{data }{data frame}
-  \item{prior.betas }{Prior distribution for regression parameters within each model. Possible choices include "Robust", "Liangetal", "gZellner" and "ZellnerSiow"}
-  \item{prior.models }{Prior distribution over the model space. Possible choices are "Constant" and "ScottBerger"}
+  \item{formula }{Formula defining the most complex regression model in the analysis (package forces the intercept always to be included). See details.}
+  \item{data }{data frame containing the data.}
+  \item{prior.betas }{Prior distribution for regression parameters within each model. Possible choices include "Robust", "Liangetal", "gZellner" and "ZellnerSiow" (see details)}
+  \item{prior.models }{Prior distribution over the model space. Possible choices are "Constant" and "ScottBerger" (see details)}
   \item{n.keep }{How many of the most probable models are to be kept?}
   \item{n.nodes }{Number of nodes to be used in the computation}
 }
 \details{
 This function takes advantage of the library \code{parallel} to distribute the models in the model space
 throughout the number of nodes available. Its intended use is for moderately large model spaces (p>=20).
-Apart from this, the details in \code{\link[BayesVarSel]{Bvs}} also apply here.
+
+A detailed description of the arguments can be found in the details section in \code{\link[BayesVarSel]{Bvs}}.
 }
 \value{\code{PBvs} returns an object of class \code{Bvs} with the following elements:
 \item{time }{The internal time consumed in solving the problem}

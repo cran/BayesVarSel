@@ -1,9 +1,13 @@
-print.summary.Bvs <-
-function(x,...){
-  cat("Estimates and Inclusion Probabilities:\n")
-  cat("Note: If a covariate has a * in HPM(MPM) indicates that it is\n included in the Higest Probability Model (Median Probability Model)\n ")
+print.summary.Bvs <- function(x,...){
+  cat("\n")
+  cat("Call:\n")
+  print(x$call)
+  cat("\n")
+  cat("Inclusion Probabilities:\n")
   print(x$summary)
+  cat("---\n")
+  cat("Code: HPM stands for Highest posterior Probability Model and\n MPM for Median Probability Model.\n ")
   if(x$method=="gibbs"){
-    cat("Note 2: For this problem you used Gibbs sampling so the HPM reported\n is the most probable among the visited models. Also\n the given inclusion probabilities are\n estimations of the real ones.\n")
+    cat("Results are estimates based on the visited models.\n")
   }
 }
