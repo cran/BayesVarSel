@@ -43,7 +43,7 @@ void GibbsgConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], in
 	int n=*pn;
 	int p=*pp;
 	int SAVE=*pSAVE;
-
+    int k0=1;//number of covariates in the most simple model
 	//The files have an index attached:
 	char subindex[100];
 	strcpy(subindex,*pI);
@@ -164,7 +164,7 @@ void GibbsgConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], in
 	//printf("Q= %.20f\n", Q);
 	
 	//the bayes factor in favor of Mi and against M0 
-	oldPBF= gBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+	oldPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 	double HPMBF=oldPBF;
 	double ratio=0.0;
 	
@@ -175,7 +175,7 @@ void GibbsgConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], in
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -193,7 +193,7 @@ void GibbsgConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], in
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -316,7 +316,7 @@ void GibbsgSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *
 	int n=*pn;
 	int p=*pp;
 	int SAVE=*pSAVE;
-	
+	int k0=1;
 	//The files have an index attached:
 	char subindex[100];
 	strcpy(subindex,*pI);
@@ -437,7 +437,7 @@ void GibbsgSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *
 	//printf("Q= %.20f\n", Q);
 	
 	//the bayes factor in favor of Mi and against M0 
-	oldPBF= gBF21fun(n,k2,Q)*SBpriorprob(p,k2);
+	oldPBF= gBF21fun(n,k2,k0,Q)*SBpriorprob(p,k2);
 	double HPMBF=oldPBF;
 	double ratio=0.0;
 	
@@ -448,7 +448,7 @@ void GibbsgSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,Q)*SBpriorprob(p,k2);
+			newPBF= gBF21fun(n,k2,k0,Q)*SBpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -572,7 +572,7 @@ void GibbsRobustConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[
 	int n=*pn;
 	int p=*pp;
 	int SAVE=*pSAVE;
-	
+	int k0=1;
 	//The files have an index attached:
 	char subindex[100];
 	strcpy(subindex,*pI);
@@ -693,7 +693,7 @@ void GibbsRobustConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[
 	//printf("Q= %.20f\n", Q);
 	
 	//the bayes factor in favor of Mi and against M0 
-	oldPBF= RobustBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+	oldPBF= RobustBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 	double HPMBF=oldPBF;
 	double ratio=0.0;
 	
@@ -704,7 +704,7 @@ void GibbsRobustConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -722,7 +722,7 @@ void GibbsRobustConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= RobustBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+			newPBF= RobustBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -847,7 +847,7 @@ void GibbsRobustSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], 
 	int n=*pn;
 	int p=*pp;
 	int SAVE=*pSAVE;
-	
+	int k0=1;
 	//The files have an index attached:
 	char subindex[100];
 	strcpy(subindex,*pI);
@@ -968,7 +968,7 @@ void GibbsRobustSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], 
 	//printf("Q= %.20f\n", Q);
 	
 	//the bayes factor in favor of Mi and against M0 
-	oldPBF= RobustBF21fun(n,k2,Q)*SBpriorprob(p,k2);
+	oldPBF= RobustBF21fun(n,k2,k0,Q)*SBpriorprob(p,k2);
 	double HPMBF=oldPBF;
 	double ratio=0.0;
 	
@@ -979,7 +979,7 @@ void GibbsRobustSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], 
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -996,7 +996,7 @@ void GibbsRobustSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], 
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= RobustBF21fun(n,k2,Q)*SBpriorprob(p,k2);
+			newPBF= RobustBF21fun(n,k2,k0,Q)*SBpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -1121,7 +1121,7 @@ void GibbsLiangConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[]
 	int n=*pn;
 	int p=*pp;
 	int SAVE=*pSAVE;
-	
+	int k0=1;
 	//The files have an index attached:
 	char subindex[100];
 	strcpy(subindex,*pI);
@@ -1242,7 +1242,7 @@ void GibbsLiangConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[]
 	//printf("Q= %.20f\n", Q);
 	
 	//the bayes factor in favor of Mi and against M0 
-	oldPBF= LiangBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+	oldPBF= LiangBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 	double HPMBF=oldPBF;
 	double ratio=0.0;
 	
@@ -1253,7 +1253,7 @@ void GibbsLiangConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[]
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -1270,7 +1270,7 @@ void GibbsLiangConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[]
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= LiangBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+			newPBF= LiangBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -1395,7 +1395,7 @@ void GibbsLiangSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 	int n=*pn;
 	int p=*pp;
 	int SAVE=*pSAVE;
-	
+	int k0=1;
 	//The files have an index attached:
 	char subindex[100];
 	strcpy(subindex,*pI);
@@ -1516,7 +1516,7 @@ void GibbsLiangSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 	//printf("Q= %.20f\n", Q);
 	
 	//the bayes factor in favor of Mi and against M0 
-	oldPBF= LiangBF21fun(n,k2,Q)*SBpriorprob(p,k2);
+	oldPBF= LiangBF21fun(n,k2,k0,Q)*SBpriorprob(p,k2);
 	double HPMBF=oldPBF;
 	double ratio=0.0;
 	
@@ -1527,7 +1527,7 @@ void GibbsLiangSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -1544,7 +1544,7 @@ void GibbsLiangSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= LiangBF21fun(n,k2,Q)*SBpriorprob(p,k2);
+			newPBF= LiangBF21fun(n,k2,k0,Q)*SBpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -1668,7 +1668,7 @@ void GibbsZSConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 	int n=*pn;
 	int p=*pp;
 	int SAVE=*pSAVE;
-	
+	int k0=1;
 	//The files have an index attached:
 	char subindex[100];
 	strcpy(subindex,*pI);
@@ -1789,7 +1789,7 @@ void GibbsZSConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 	//printf("Q= %.20f\n", Q);
 	
 	//the bayes factor in favor of Mi and against M0 
-	oldPBF= ZSBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+	oldPBF= ZSBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 	double HPMBF=oldPBF;
 	double ratio=0.0;
 	
@@ -1800,7 +1800,7 @@ void GibbsZSConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -1817,7 +1817,7 @@ void GibbsZSConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= ZSBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+			newPBF= ZSBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -1943,7 +1943,7 @@ void GibbsZSSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int 
 	int n=*pn;
 	int p=*pp;
 	int SAVE=*pSAVE;
-	
+	int k0=1;
 	//The files have an index attached:
 	char subindex[100];
 	strcpy(subindex,*pI);
@@ -2064,7 +2064,7 @@ void GibbsZSSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int 
 	//printf("Q= %.20f\n", Q);
 	
 	//the bayes factor in favor of Mi and against M0 
-	oldPBF= ZSBF21fun(n,k2,Q)*SBpriorprob(p,k2);
+	oldPBF= ZSBF21fun(n,k2,k0,Q)*SBpriorprob(p,k2);
 	double HPMBF=oldPBF;
 	double ratio=0.0;
 	
@@ -2075,7 +2075,7 @@ void GibbsZSSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int 
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,Q)*Constpriorprob(p,k2);
+			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -2092,7 +2092,7 @@ void GibbsZSSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int 
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= ZSBF21fun(n,k2,Q)*SBpriorprob(p,k2);
+			newPBF= ZSBF21fun(n,k2,k0,Q)*SBpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  

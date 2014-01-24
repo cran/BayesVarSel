@@ -1,7 +1,7 @@
  PBvs <-
 function(formula, data, prior.betas="Robust", prior.models="Constant", n.keep=1, n.nodes=2){
 
-require(parallel)#package for parallel computation
+#require(parallel)#package for parallel computation
 
 cl <- makeCluster(n.nodes, type = "SOCK") 
 

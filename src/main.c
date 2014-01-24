@@ -1,3 +1,4 @@
+/*Modified on January 20th 2014*/
 #include "R.h"
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
@@ -147,20 +148,20 @@ void gConst (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfinal
 	
 	gsl_vector_set(Who_Max_SAVE, 0, 0);
 	gsl_vector_set(Max_SAVE_BF, 0, 1.0*Constpriorprob(p,dimensionNull));
-
+    
+    
+    int k0=1;/*The number of covariates in the most simple model... 1 means the most simple model being the NULL (just containing the intercept)*/
 	// //////////////////////////////////////////////
 	//LOOP I: First we fill the vectors with the first values of the Bayes factor
 	for (model=StartAt; model<(SAVE+StartAt-1); model++)
 			{
-		//printf("%Ld\n", model);
-		//Obtain Q=SSE/SSEnull and other calculations
-		//also: i)index, which is returned, contains
-		//the binary expression of the model;
 		Q=statistics(model, p, n, SSEnull, X, y, index, &k2, hatbetap);
+        /*Returns Q_i0, index (binary expression of the model), and k2(number of covariates in the model including the intercept)*/
+                
 		//printf("Q= %.20f\n", Q);
 
 		//the bayes factor in favor of modeli and against M0 
-		BF21= gBF21fun(n,k2,Q);
+		BF21= gBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.20f\n", BF21);
 
 		//Now the main calculations:
@@ -198,7 +199,7 @@ void gConst (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfinal
 		Q=statistics(model, p, n, SSEnull, X, y, index, &k2, hatbetap);
 				
 		//the bayes factor in favor of modeli and against M0 
-		BF21= gBF21fun(n,k2,Q);
+		BF21= gBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.6f\n", BF21);
 				
 		//Now the main calculations:
@@ -471,7 +472,7 @@ void gSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfinal, c
 	
 	gsl_vector_set(Who_Max_SAVE, 0, 0);
 	gsl_vector_set(Max_SAVE_BF, 0, 1.0*SBpriorprob(p,dimensionNull));
-	
+	int k0=1;
 	// //////////////////////////////////////////////
 	//LOOP I: First we fill the vectors with the first values of the Bayes factor
 	for (model=StartAt; model<(SAVE+StartAt-1); model++)
@@ -484,7 +485,7 @@ void gSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfinal, c
 		//printf("Q= %.20f\n", Q);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= gBF21fun(n,k2,Q);
+		BF21= gBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.20f\n", BF21);
 		
 		//Now the main calculations:
@@ -522,7 +523,7 @@ void gSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfinal, c
 		Q=statistics(model, p, n, SSEnull, X, y, index, &k2, hatbetap);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= gBF21fun(n,k2,Q);
+		BF21= gBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.6f\n", BF21);
 		
 		//Now the main calculations:
@@ -794,7 +795,7 @@ void RobustConst (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *p
 	
 	gsl_vector_set(Who_Max_SAVE, 0, 0);
 	gsl_vector_set(Max_SAVE_BF, 0, 1.0*Constpriorprob(p,dimensionNull));
-	
+	int k0=1;
 	// //////////////////////////////////////////////
 	//LOOP I: First we fill the vectors with the first values of the Bayes factor
 	for (model=StartAt; model<(SAVE+StartAt-1); model++)
@@ -807,7 +808,7 @@ void RobustConst (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *p
 		//printf("Q= %.20f\n", Q);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= RobustBF21fun(n,k2,Q);
+		BF21= RobustBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.20f\n", BF21);
 		
 		//Now the main calculations:
@@ -845,7 +846,7 @@ void RobustConst (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *p
 		Q=statistics(model, p, n, SSEnull, X, y, index, &k2, hatbetap);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= RobustBF21fun(n,k2,Q);
+		BF21= RobustBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.6f\n", BF21);
 		
 		//Now the main calculations:
@@ -1122,7 +1123,7 @@ void RobustSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfin
 	
 	gsl_vector_set(Who_Max_SAVE, 0, 0);
 	gsl_vector_set(Max_SAVE_BF, 0, 1.0*SBpriorprob(p,dimensionNull));
-	
+	int k0=1;
 	// //////////////////////////////////////////////
 	//LOOP I: First we fill the vectors with the first values of the Bayes factor
 	for (model=StartAt; model<(SAVE+StartAt-1); model++)
@@ -1135,7 +1136,7 @@ void RobustSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfin
 		//printf("Q= %.20f\n", Q);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= RobustBF21fun(n,k2,Q);
+		BF21= RobustBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.20f\n", BF21);
 		
 		//Now the main calculations:
@@ -1174,7 +1175,7 @@ void RobustSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfin
 		Q=statistics(model, p, n, SSEnull, X, y, index, &k2, hatbetap);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= RobustBF21fun(n,k2,Q);
+		BF21= RobustBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.6f\n", BF21);
 		
 		//Now the main calculations:
@@ -1445,7 +1446,7 @@ void LiangConst (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pf
 	
 	gsl_vector_set(Who_Max_SAVE, 0, 0);
 	gsl_vector_set(Max_SAVE_BF, 0, 1.0*Constpriorprob(p,dimensionNull));
-	
+	int k0=1;
 	// //////////////////////////////////////////////
 	//LOOP I: First we fill the vectors with the first values of the Bayes factor
 	for (model=StartAt; model<(SAVE+StartAt-1); model++)
@@ -1458,7 +1459,7 @@ void LiangConst (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pf
 		//printf("Q= %.20f\n", Q);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= LiangBF21fun(n,k2,Q);
+		BF21= LiangBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.20f\n", BF21);
 		
 		//Now the main calculations:
@@ -1497,7 +1498,7 @@ void LiangConst (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pf
 		Q=statistics(model, p, n, SSEnull, X, y, index, &k2, hatbetap);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= LiangBF21fun(n,k2,Q);
+		BF21= LiangBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.6f\n", BF21);
 		
 		//Now the main calculations:
@@ -1769,7 +1770,7 @@ void LiangSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfina
 	
 	gsl_vector_set(Who_Max_SAVE, 0, 0);
 	gsl_vector_set(Max_SAVE_BF, 0, 1.0*SBpriorprob(p,dimensionNull));
-	
+	int k0=1;
 	// //////////////////////////////////////////////
 	//LOOP I: First we fill the vectors with the first values of the Bayes factor
 	for (model=StartAt; model<(SAVE+StartAt-1); model++)
@@ -1782,7 +1783,7 @@ void LiangSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfina
 		//printf("Q= %.20f\n", Q);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= LiangBF21fun(n,k2,Q);
+		BF21= LiangBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.20f\n", BF21);
 		
 		//Now the main calculations:
@@ -1821,7 +1822,7 @@ void LiangSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfina
 		Q=statistics(model, p, n, SSEnull, X, y, index, &k2, hatbetap);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= LiangBF21fun(n,k2,Q);
+		BF21= LiangBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.6f\n", BF21);
 		
 		//Now the main calculations:
@@ -2090,7 +2091,7 @@ void ZSConst (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfina
 	
 	gsl_vector_set(Who_Max_SAVE, 0, 0);
 	gsl_vector_set(Max_SAVE_BF, 0, 1.0*Constpriorprob(p,dimensionNull));
-	
+	int k0=1;
 	// //////////////////////////////////////////////
 	//LOOP I: First we fill the vectors with the first values of the Bayes factor
 	for (model=StartAt; model<(SAVE+StartAt-1); model++)
@@ -2103,7 +2104,7 @@ void ZSConst (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfina
 		//printf("Q= %.20f\n", Q);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= ZSBF21fun(n,k2,Q);
+		BF21= ZSBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.20f\n", BF21);
 		
 		//Now the main calculations:
@@ -2142,7 +2143,7 @@ void ZSConst (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfina
 		Q=statistics(model, p, n, SSEnull, X, y, index, &k2, hatbetap);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= ZSBF21fun(n,k2,Q);
+		BF21= ZSBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.6f\n", BF21);
 		
 		//Now the main calculations:
@@ -2413,7 +2414,7 @@ void ZSSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfinal, 
 	
 	gsl_vector_set(Who_Max_SAVE, 0, 0);
 	gsl_vector_set(Max_SAVE_BF, 0, 1.0*SBpriorprob(p,dimensionNull));
-	
+	int k0=1;
 	// //////////////////////////////////////////////
 	//LOOP I: First we fill the vectors with the first values of the Bayes factor
 	for (model=StartAt; model<(SAVE+StartAt-1); model++)
@@ -2426,7 +2427,7 @@ void ZSSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfinal, 
 		//printf("Q= %.20f\n", Q);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= ZSBF21fun(n,k2,Q);
+		BF21= ZSBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.20f\n", BF21);
 		
 		//Now the main calculations:
@@ -2465,7 +2466,7 @@ void ZSSB (char *pI[], int *pn, int *pp, int *pSAVE, int *pinicio, int *pfinal, 
 		Q=statistics(model, p, n, SSEnull, X, y, index, &k2, hatbetap);
 		
 		//the bayes factor in favor of modeli and against M0 
-		BF21= ZSBF21fun(n,k2,Q);
+		BF21= ZSBF21fun(n,k2,k0,Q);
 		//printf("The Bayes factor is: %.6f\n", BF21);
 		
 		//Now the main calculations:
