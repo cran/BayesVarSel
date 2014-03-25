@@ -13,6 +13,6 @@ double Constpriorprob(int p, int dimensioni)
 double SBpriorprob(int p, int dimensioni)
 {
 	//use this for Scott and Berger prior:
-	return(exp(-gsl_sf_lnchoose(p, dimensioni-1)));
+	return(exp(-gsl_sf_lnchoose(p-1.0, dimensioni-1.0)));
 }
 

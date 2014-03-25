@@ -1,4 +1,4 @@
-0de67dfecf3f758b6425989595341a39 *DESCRIPTION
+e988638fecd6c4620d987c074a756296 *DESCRIPTION
 d39d482f55cd35267e880f59d48ae442 *NAMESPACE
 5befdd89b4ddea8d81ba9cd8da8bcbee *R/Bvs.R
 1afe134f77bdf0d81aeefa396f835ad1 *R/GibbsBvs.R
@@ -29,6 +29,7 @@ ba981cddae7a2fe0482bda3c2cedc546 *src/allBF.h
 ad6d55ffd0e4691e1ab12c5ec30ecbc6 *src/auxiliaryfuncs.c
 66e0c536652d60cffe2909f66c81238b *src/auxiliaryfuncs.h
 99d41de3bb759dfc1517c8ddae83b277 *src/main.c
-c3ae5e1ad61e5b6db95a57d573370538 *src/mainGibbs.c
-2d02bf7f2afe596f1f155ebf9ff2c573 *src/priorprob.c
+7ad3cfefc492ea1366bdff24baa25263 *src/mainGibbs.c
+0fdc2b1161935626755dca08916a2cfe *src/mainSingle.c
+4eae64d932ae46b0c3d465082e992885 *src/priorprob.c
 cf392b590b4dd3478600c6bc28148d5e *src/priorprob.h

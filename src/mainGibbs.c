@@ -168,7 +168,7 @@ void GibbsgConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], in
 	double HPMBF=oldPBF;
 	double ratio=0.0;
 	
-	
+	//Burnin	
 	for (iter=1; iter<(*pBurnin+1); iter++){
 		for (component=1; component<p; component++)
 		{
@@ -441,6 +441,24 @@ void GibbsgSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *
 	double HPMBF=oldPBF;
 	double ratio=0.0;
 	
+	//Burnin	
+	for (iter=1; iter<(*pBurnin+1); iter++){
+		for (component=1; component<p; component++)
+		{
+			oldcomponent=gsl_vector_get(index, component);
+			gsl_vector_set(index, component, 1-oldcomponent);
+			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
+			newPBF= gBF21fun(n,k2,k0,Q)*SBpriorprob(p,k2);
+			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
+			newcomponent=gsl_ran_bernoulli(ran, ratio);
+			if (newcomponent==oldcomponent)  
+				gsl_vector_set(index, component, newcomponent);
+			else
+				oldPBF=newPBF;
+		}
+		R_CheckUserInterrupt();
+	}
+	
 	
 	for (iter=1; iter<(SAVE+1); iter++){
 		for (component=1; component<p; component++)
@@ -704,7 +722,7 @@ void GibbsRobustConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
+			newPBF= RobustBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -979,7 +997,7 @@ void GibbsRobustSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], 
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
+			newPBF= RobustBF21fun(n,k2,k0,Q)*SBpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -1253,7 +1271,7 @@ void GibbsLiangConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[]
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
+			newPBF= LiangBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -1527,7 +1545,7 @@ void GibbsLiangSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
+			newPBF= LiangBF21fun(n,k2,k0,Q)*SBpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -1800,7 +1818,7 @@ void GibbsZSConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
+			newPBF= ZSBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
@@ -2075,7 +2093,7 @@ void GibbsZSSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int 
 			oldcomponent=gsl_vector_get(index, component);
 			gsl_vector_set(index, component, 1-oldcomponent);
 			Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
-			newPBF= gBF21fun(n,k2,k0,Q)*Constpriorprob(p,k2);
+			newPBF= ZSBF21fun(n,k2,k0,Q)*SBpriorprob(p,k2);
 			ratio=(oldcomponent*(oldPBF-newPBF)+newPBF)/(newPBF+oldPBF);
 			newcomponent=gsl_ran_bernoulli(ran, ratio);
 			if (newcomponent==oldcomponent)  
