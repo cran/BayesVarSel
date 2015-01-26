@@ -9,21 +9,24 @@ Approximate computation of summaries of the posterior distribution using a Gibbs
 to explore the model space and frequency of "visits" to construct the estimates.
 }
 \usage{
-GibbsBvs(formula, data, prior.betas = "Robust",
-         prior.models = "Constant", n.iter, init.model = "Null",
-         n.burnin = 50, time.test = TRUE)
+GibbsBvs(formula, fixed.cov = c("Intercept"), data, prior.betas = "Robust",
+         prior.models = "Constant", n.iter=1000, init.model = "Full",
+         n.burnin = 50, n.thin=max(1, floor(n.iter / 1000)), 
+         time.test = TRUE, priorprobs=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{formula }{Formula defining the most complex regression model in the analysis (package forces the intercept always to be included). See details.}
+ \item{formula }{Formula defining the most complex regression model in the analysis. See details.}
+  \item{fixed.cov}{A character vector with the names of the covariates that will be considered as fixed (no variable selection over these). This argument provides an implicit definition of the simplest model considered. Default is "Intercept". Use "Null" if selection should be performed over all the variables defined by \code{formula}}
   \item{data }{data frame containing the data.}
-  \item{prior.betas }{Prior distribution for regression parameters within each model. Possible choices include "Robust", "Liangetal", "gZellner" and "ZellnerSiow" (see details).}
-  \item{prior.models }{Prior distribution over the model space. Possible choices are "Constant" and "ScottBerger"  (see details).}
-  \item{n.iter }{The number of iterations (after the burn in process). All these models are kept and are used in the estimates.}
-  \item{init.model }{The model at which the simulation process starts. Options include "null" (the model with just intercept), "full" (the model defined by \code{formula}) and a vector with p (the number of covariates in the model defined by \code{formula}) zeros and ones defining a model.}
-  \item{n.burnin }{The number of iterations at the beginning of the MCMC that
-          are thrown away.}
+  \item{prior.betas }{Prior distribution for regression parameters within each model. Possible choices include "Robust", "Liangetal", "gZellner",  "ZellnerSiow" and "FLS" (see details).}
+  \item{prior.models }{Prior distribution over the model space. Possible choices are "Constant", "ScottBerger"  and "User" (see details).}
+  \item{n.iter }{The total number of iterations performed after the burn in process.}
+  \item{init.model }{The model at which the simulation process starts. Options include "Null" (the model only with the covariates specified in \code{fixed.cov}), "Full" (the model defined by \code{formula}), "Random" (a randomly selected model) and a vector with p (the number of covariates to select from) zeros and ones defining a model.}
+  \item{n.burnin }{Length of burn in, i.e. number of iterations to discard at the beginning.}
+  \item{n.thin}{Thinning rate. Must be a positive integer.  Set 'n.thin' > 1 to save memory and computation time if 'n.iter' is large. Default is 'max(1, floor(n.iter / 1000)'. This parameter jointly with \code{n.iter} sets the number of simulations kept and used to construct the estimates}
   \item{time.test }{If TRUE and the number of variables is large (>=21) a preliminary test to estimate computational time is performed.}
+  \item{priorprobs}{A p+1 dimensional vector defining the prior probabilities Pr(M_i) (should be used in the case where \code{prior.models}="User"; see the details in \code{\link[BayesVarSel]{Bvs}}.)}
 }
 \details{
 This is a heuristic approximation to the function \code{\link[BayesVarSel]{Bvs}} so the details there apply also here.
@@ -33,16 +36,17 @@ The algorithm implemented is a Gibbs sampling-based searching algorithm original
 
 \value{\code{GibbsBvs} returns an object of class \code{Bvs} with the following elements:
 \item{time }{The internal time consumed in solving the problem}
-\item{lm }{The \code{lm} class object that results when the model defined by \code{formula} is fitted by \code{lm}}
+\item{lmfull }{The \code{lm} class object that results when the model defined by \code{formula} is fitted by \code{lm}}
+\item{lmnull }{The \code{lm} class object that results when the model defined by \code{fixed.cov} is fitted by \code{lm}}
 \item{variables }{The name of all the potential explanatory variables}
 \item{n }{Number of observations}
-\item{p }{Total number of explanatory variables (including the intercept) in the most complex model.}
+\item{p }{Number of explanatory variables to select from}
+\item{k }{Number of fixed variables}
 \item{HPMbin }{The binary expression of the most probable model found.}
-\item{modelsprob }{\code{NULL} (posterior probabilities of single models are not well estimated using this method).}
 \item{inclprob }{A \code{data.frame} with the estimates of the inclusion probabilities of all the variables.}
 \item{jointinclprob }{A \code{data.frame} with the estimates of the joint inclusion probabilities of all the variables.}
 \item{postprobdim }{Estimates of posterior probabilities of the dimension of the true model.}
-\item{betahat }{Estimates of the model-averaged estimator of the regression parameters.}
+\item{modelslogBF}{A matrix with both the binary representation of the visited models after the burning period and the Bayes factor (log scale) of that model to the null model.}
 \item{call }{The \code{call} to the function.}
 \item{method }{\code{gibbs}} 
 
@@ -78,10 +82,12 @@ data(Ozone35)
 #regression parameters and constant prior
 #over the model space
 #In this Gibbs sampling scheme, we perform 10100 iterations,
-#of which the first 100 are discharged (burnin)
-#as initial model we use the null model (only intercept)
+#of which the first 100 are discharged (burnin) and of the remaining
+#only one each 10 is kept.
+#as initial model we use the Full model
 Oz35.GibbsBvs<- GibbsBvs(formula="y~.", data=Ozone35, prior.betas="gZellner",
-prior.models="Constant", n.iter=10000, init.model="null", n.burnin=100, time.test = FALSE)
+prior.models="Constant", n.iter=10000, init.model="Full", n.burnin=100, 
+time.test = FALSE)
 
 #Note: this is a heuristic approach and results are estimates
 #of the exact answer.

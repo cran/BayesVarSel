@@ -44,13 +44,13 @@ double statistics(int model, int p, int n, double SSEnull, gsl_matrix * X,
 				  gsl_vector *hatbetap)
 {
 	
-	*k2=1;
-	int cont=1;
-	int i=0; 
-	//long long binmodel=model;
-	int binmodel=model;
-	//long double BF21=0.0;
+	*k2=0;
+	int cont=0;
+	int i=0;
 	double SSE=0.0;
+	
+	
+	int binmodel=model;
 	//index is the binary expression of variable model
 	while (binmodel != 0)
 	{
@@ -60,8 +60,16 @@ double statistics(int model, int p, int n, double SSEnull, gsl_matrix * X,
 		cont++;
 	}	
 	
-	//now we always consider the intercept
-	gsl_vector_set(index, 0, 1);
+	/*
+	//This new piece of code by Enric Lazcorreta (August 2014):
+	for (int j=0; j<p; j++){
+		if (model && pow(2,j)) {
+			gsl_vector_set(index, j, 1);
+			*k2+=1;
+		}
+	}
+	*/
+	
 	//hatbeta will store the mle of the k2-dimensional beta
 	gsl_vector * hatbeta=gsl_vector_calloc(*k2);
 	//hatbetap will store the mle of the k2-dimensional beta but, inserted
@@ -121,7 +129,8 @@ double statistics(int model, int p, int n, double SSEnull, gsl_matrix * X,
 //p and index (the binary expression of the model). Then updates NormConstant, NormConstantPrior, incl_prob, dimension_prob 
 //. It returns unnormPostProb, used in the loop.
 
-//Note: there are two mainalgebraics. Constmainalgebraics (uses Pr(Mi)=cte) and SBmainalgebraics (uses Pr(Mi)=Scott and Berger)
+//Note: there are three mainalgebraics. Constmainalgebraics (uses Pr(Mi)=cte), SBmainalgebraics (uses Pr(Mi)=Scott and Berger) 
+//and Usermainalgebraics (uses a vector defined by the user)
 
 double Constmainalgebraics(double BF21, int p, gsl_vector * index, double *NormConstant, 
 						double *NormConstantPrior, gsl_vector *incl_prob, 
@@ -154,9 +163,9 @@ double Constmainalgebraics(double BF21, int p, gsl_vector * index, double *NormC
 	//update the mean of betahats
 	gsl_blas_daxpy(unnormPostProb, hatbetap, meanhatbetap);
 	//ii)sum with the accumulated (unnormalized) probability of each dimension 
-	acdimensioni=gsl_vector_get(dimension_prob,k2-1)+unnormPostProb;
+	acdimensioni=gsl_vector_get(dimension_prob,k2)+unnormPostProb;
 	//iii)fill the corresponding new value with the updated one
-	gsl_vector_set(dimension_prob,k2-1,acdimensioni);
+	gsl_vector_set(dimension_prob,k2,acdimensioni);
 	
     return(unnormPostProb);	
 	
@@ -194,13 +203,53 @@ double SBmainalgebraics(double BF21, int p, gsl_vector * index, double *NormCons
 	//update the mean of betahats
 	gsl_blas_daxpy(unnormPostProb, hatbetap, meanhatbetap);
 	//ii)sum with the accumulated (unnormalized) probability of each dimension 
-	acdimensioni=gsl_vector_get(dimension_prob,k2-1)+unnormPostProb;
+	acdimensioni=gsl_vector_get(dimension_prob,k2)+unnormPostProb;
 	//iii)fill the corresponding new value with the updated one
-	gsl_vector_set(dimension_prob,k2-1,acdimensioni);
+	gsl_vector_set(dimension_prob,k2,acdimensioni);
 	
     return(unnormPostProb);	
 	
 }
+
+double Usermainalgebraics(gsl_vector *priorvector, double BF21, int p, gsl_vector * index, double *NormConstant, 
+						double *NormConstantPrior, gsl_vector *incl_prob, 
+						gsl_vector *dimension_prob,
+						int k2, gsl_vector *hatbetap, gsl_vector *meanhatbetap, 
+						gsl_matrix *joint_incl_prob)
+{
+	
+	
+	double acdimensioni=0.0;
+	
+	//Multiply the BF by the prior probability to obtain the unnormalized posterior probability
+	//(this is the one that is going to be used in the calculations)
+	double unnormPostProb=BF21*gsl_vector_get(priorvector,k2);
+	
+	//update the normalizing constants:
+	//i)of the posterior
+	*NormConstant+=unnormPostProb;
+	
+	//ii)and of the prior
+	*NormConstantPrior+=gsl_vector_get(priorvector,k2);
+	
+	//update the inclusion probs:
+	gsl_blas_daxpy(unnormPostProb, index, incl_prob);
+	
+	
+	//update the joint inclusion probs:
+	gsl_blas_dger(unnormPostProb, index, index, joint_incl_prob);
+	
+	//update the mean of betahats
+	gsl_blas_daxpy(unnormPostProb, hatbetap, meanhatbetap);
+	//ii)sum with the accumulated (unnormalized) probability of each dimension 
+	acdimensioni=gsl_vector_get(dimension_prob,k2)+unnormPostProb;
+	//iii)fill the corresponding new value with the updated one
+	gsl_vector_set(dimension_prob,k2,acdimensioni);
+	
+    return(unnormPostProb);	
+	
+}
+
 
 
 //A function given a vector v of size N (and a vector of indexes w), ordered in descending order except the last one
@@ -264,6 +313,22 @@ int my_gsl_matrix_fprintf(FILE *stream,gsl_matrix *m,char *fmt)
 		fprintf(stream,"\n");
 	}
 	gsl_vector_free(maxlen);
+	return 0;
+}
+
+//A function to print a vector in a file by rows
+int my_gsl_vector_fprintf(FILE *stream, gsl_vector *v, char *fmt)
+{
+	size_t length=v->size;
+	size_t i=0;
+	
+	for (i=0;i<length;++i) {
+		fprintf(stream, fmt, gsl_vector_get(v, i));
+		fprintf(stream, " ");
+	}
+	
+	fprintf(stream,"\n");
+	
 	return 0;
 }
 

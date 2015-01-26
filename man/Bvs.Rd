@@ -12,48 +12,60 @@ Bayesian Variable Selection for linear regression models
 Exact computation of summaries of the posterior distribution using sequential computation.
 }
 \usage{
-Bvs(formula, data, prior.betas = "Robust", 
-    prior.models = "Constant", n.keep, time.test = TRUE)
+Bvs(formula, fixed.cov=c("Intercept"), data, prior.betas = "Robust", 
+    prior.models = "Constant", n.keep = 10, time.test = TRUE, priorprobs=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{formula }{Formula defining the most complex regression model in the analysis (package forces the intercept always to be included). See details.}
+  \item{formula }{Formula defining the most complex regression model in the analysis. See details.}
+  \item{fixed.cov}{A character vector with the names of the covariates that will be considered as fixed (no variable selection over these). This argument provides an implicit definition of the simplest model considered. Default is "Intercept". Use "Null" if selection should be performed over all the variables defined by \code{formula}}
   \item{data }{data frame containing the data.}
-  \item{prior.betas }{Prior distribution for regression parameters within each model. Possible choices include "Robust", "Liangetal", "gZellner" and "ZellnerSiow" (see details).}
-  \item{prior.models }{Prior distribution over the model space. Possible choices are "Constant" and "ScottBerger" (see details).}
-  \item{n.keep }{How many of the most probable models are to be kept?}
+  \item{prior.betas }{Prior distribution for regression parameters within each model. Possible choices include "Robust", "Liangetal", "gZellner", "ZellnerSiow" and "FLS"  (see details).}
+  \item{prior.models }{Prior distribution over the model space. Possible choices are "Constant", "ScottBerger" and "User" (see details).}
+  \item{n.keep }{How many of the most probable models are to be kept? By default is set to 10, which is automatically adjusted if 10 is greater than the total number of models.}
   \item{time.test }{If TRUE and the number of variables is moderately large (>=18) a preliminary test to estimate computational time is performed.}
+  \item{priorprobs}{A p+1 (p is the number of non-fixed covariates) dimensional vector defining the prior probabilities Pr(M_i) (should be used in the case where \code{prior.models}= "User"; see details.)}
 }
-\details{The model space is the set of all models, Mi, that contain the intercept and are nested in that specified by \code{formula}. The simplest of such models, M0, contains only the intercept. Then \code{Bvs} provides exact summaries of the posterior distribution over this model space, that is, summaries of the 
-discrete distribution which assigns to each model Mi its probability given the data: 
+\details{
+	The model space is the set of all models, Mi, that contain the intercept and are nested in that specified by \code{formula}. The simplest of such models, M0, contains only the intercept. Then \code{Bvs} provides exact summaries of the posterior distribution over this model space, that is, summaries of the discrete distribution which assigns to each model Mi its probability given the data: 
 
 Pr(Mi | \code{data})=Pr(Mi)*Bi/C, 
 
 where Bi is the Bayes factor of Mi to M0, Pr(Mi) is the prior probability of Mi and C is the normalizing constant. 
 
-The Bayes factor B_i depends on the prior assigned for the regression parameters in Mi and \code{Bvs} implements a number of popular choices plus the "Robust" prior recently proposed by Bayarri et al (2012). The "Robust" prior is the default choice for both theoretical (see the reference for details) and computational reasons since it produces Bayes factors with closed-form expressions. The "gZellner" prior implemented corresponds to the prior in Zellner (1986) with g=n while the "Liangetal" prior is the hyper-g/n with a=3 (see the original paper Liang et al 2008, for details). Finally, "ZellnerSiow" is the multivariate Cauchy prior proposed by Zellner and Siow (1980, 1984), further studied by Bayarri and Garcia-Donato (2007).
+The Bayes factor B_i depends on the prior assigned for the regression parameters in Mi and \code{Bvs} implements a number of popular choices plus the "Robust" prior recently proposed by Bayarri et al (2012). The "Robust" prior is the default choice for both theoretical (see the reference for details) and computational reasons since it produces Bayes factors with closed-form expressions. The "gZellner" prior implemented corresponds to the prior in Zellner (1986) with g=n while the "Liangetal" prior is the hyper-g/n with a=3 (see the original paper Liang et al 2008, for details). "ZellnerSiow" is the multivariate Cauchy prior proposed by Zellner and Siow (1980, 1984), further studied by Bayarri and Garcia-Donato (2007). Finally, "FLS" is the prior recommended by Fernandez, Ley and Steel (2001) which is the prior in Zellner (1986) with g=max(n, p*p) p being the number of covariates to choose from (the most complex model has p+number of fixed covariates).
 
-With respect to the prior over the model space Pr(Mi) two possibilities are implemented: "Constant", under which every model has the same prior probability and "ScottBerger" under which Pr(Mi)=1/((p-1)*choose(p-1, ki-1)) (assuming p and ki are the number of explanatory variables in the most complex model and Mi respectively). The "ScottBerger" prior was proposed by Scott and Berger (2010) and 
-controls for the potential pernicious effect on the posterior probabilities of a too large complex model.
+With respect to the prior over the model space Pr(Mi) three possibilities are implemented: "Constant", under which every model has the same prior probability, "ScottBerger" under which Pr(Mi) is inversely proportional to the number of models of that dimension, and "User" (see below). The "ScottBerger" prior was studied by Scott and Berger (2010) and controls for multiplicity.
 
-This function works for problems of up to p=31. 
+When the parameter \code{prior.models}="User", the prior probabilities are defined through the p+1 dimensional parameter vector \code{priorprobs}. Let k be the number of explanatory variables in the simplest model (the one defined by \code{fixed.cov}) then except for the normalizing constant, the first component of \code{priorprobs} must contain the probability of each model with k covariates (there is only one); the second component of \code{priorprobs} should contain the probability of each model with k+1 covariates and so on. Finally, the p+1 component in \code{priorprobs} defined the probability of the most complex model (that defined by \code{formula}. That is
 
-Warnings and limitations: the current version of the package does not allow for factors to be used as explanatory variables and results obtained are essentially unpredictable. The Bayes factors can be extremely big numbers if the sample size is large, potentially leading to NA's.
+\code{priorprobs}[j]=C*Pr(M_i such that M_i has j-1+k explanatory variables)
+
+where C is the normalizing constant, i.e \code{C=1/sum(priorprobs*choose(p,0:p)}.
+
+Note that \code{prior.models}="Constant" is equivalent to the combination \code{prior.models}="User" and \code{priorprobs=rep(1,(p+1))} but the internal functions are not the same and you can obtain small variations in results due to these differences in the implementation. 
+
+Similarly, \code{prior.models} = "ScottBerger" is equivalent to the combination \code{prior.models}= "User" and \code{priorprobs} =  
+\code{1/choose(p,0:p)}. 
+
+Limitations: the error "A Bayes factor is infinite.". Bayes factors can be extremely big numbers if i) the sample size is even moderately large or if ii) a model is much better (in terms of fit) than the model taken as the null model. We are currently working on more robust implementations of the functions to handle these problems. In the meanwhile you could try using the g-Zellner prior (which is the most simple one and results, in these cases, should not vary much with the prior) and/or using more accurate definitions of the simplest model (via the \code{fixed.cov} argument).
 }
 
 
-\value{\code{Bvs} returns an object of class \code{Bvs} with the following elements:
+\value{
+	\code{Bvs} returns an object of class \code{Bvs} with the following elements:
 \item{time }{The internal time consumed in solving the problem}
-\item{lm }{The \code{lm} class object that results when the model defined by \code{formula} is fitted by \code{lm}}
-\item{variables }{The name of all the potential explanatory variables.}
+\item{lmfull }{The \code{lm} class object that results when the model defined by \code{formula} is fitted by \code{lm}}
+\item{lmnull }{The \code{lm} class object that results when the model defined by \code{fixed.cov} is fitted by \code{lm}}
+\item{variables }{The name of all the potential explanatory variables (the set of variables to select from).}
 \item{n }{Number of observations}
-\item{p }{Total number of explanatory variables (including the intercept) in the most complex model}
+\item{p }{Number of explanatory variables to select from}
+\item{k }{Number of fixed variables}
 \item{HPMbin }{The binary expression of the Highest Posterior Probability model}
 \item{modelsprob }{A \code{data.frame} which summaries the \code{n.keep} most probable, a posteriori models, and their associated probability.}
 \item{inclprob }{A \code{data.frame} with the inclusion probabilities of all the variables.}
 \item{jointinclprob }{A \code{data.frame} with the joint inclusion probabilities of all the variables.}
 \item{postprobdim }{Posterior probabilities of the dimension of the true model}
-\item{betahat }{The model-averaged estimator of the regression parameters.}
 \item{call }{The \code{call} to the function}
 \item{method }{\code{full}} 
 }
@@ -61,7 +73,7 @@ Warnings and limitations: the current version of the package does not allow for 
 \author{
 Gonzalo Garcia-Donato and Anabel Forte
 
-Maintainer: <anabel.forte@uji.es>
+Maintainer: <anabel.forte@uv.es>
 }
 \references{
   Bayarri, M.J., Berger, J.O., Forte, A. and Garcia-Donato, G. (2012) Criteria for Bayesian Model choice with Application to Variable Selection. The Annals of Statistics. 40: 1550-1557.
@@ -69,6 +81,8 @@ Maintainer: <anabel.forte@uji.es>
   Bayarri, M.J. and Garcia-Donato, G. (2007). Extending conventional priors for testing general hypotheses in linear models. Biometrika, 94:135-152.
   
   Barbieri, M and Berger, J (2004). Optimal Predictive Model Selection. The Annals of Statistics, 32, 870-897.
+
+  Fernandez, C., Ley, E. and Steel, M.F.J. (2001) Benchmark priors for Bayesian model averaging. Journal of Econometrics, 100, 381-427.  
 
   Liang, F., Paulo, R., Molina, G., Clyde, M. and  Berger,
   J.O. (2008) Mixtures of  g-priors for Bayesian Variable

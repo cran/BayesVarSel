@@ -21,8 +21,6 @@ double Gibbsstatistics(int p, int n, double SSEnull, gsl_matrix * X,
 				  gsl_vector *hatbetap)
 {
 	
-	//this sum is only valid for positive elements:
-	*k2=(int) gsl_blas_dasum(index);
 	
 	//hatbeta will store the mle of the k2-dimensional beta
 	gsl_vector * hatbeta=gsl_vector_calloc(*k2);

@@ -23,7 +23,7 @@ If \code{option}="dimension"  this function returns a barplot of the posterior d
 \author{
 Gonzalo Garcia-Donato and Anabel Forte
 
-Maintainer: <anabel.forte@uji.es>
+Maintainer: <anabel.forte@uv.es>
 }
 \seealso{
 See \code{\link[BayesVarSel]{Bvs}}, \code{\link[BayesVarSel]{PBvs}} and \code{\link[BayesVarSel]{GibbsBvs}} for creating objects of the class \code{Bvs}.

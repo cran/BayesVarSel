@@ -4,9 +4,8 @@ useDynLib("BayesVarSel")
 import(parallel, MASS)
 
 # Define which functions people can see.
-export(Bvs, PBvs, GibbsBvs, plotBvs) 
+export(Bvs, PBvs, GibbsBvs, plotBvs, BayesFactor) 
+S3method(print, BayesFactor)
 S3method(summary, Bvs)
 S3method(print, Bvs)
-S3method(predict, Bvs)
 S3method(print, summary.Bvs)
-S3method(print, Bvs.predict)

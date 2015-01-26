@@ -25,6 +25,21 @@ void gBF (int *pn, int *pk2, int *pk0, double *pQ, double *B21)
 
 }
 
+void flsBF (int *pp, int *pn, int *pk2, int *pk0, double *pQ, double *B21)
+{
+    void R_CheckUserInterrupt(void);
+    gsl_set_error_handler_off();
+    
+    //PARAMETERS: (R version)
+    int n=*pn;
+    int k2=*pk2;
+    int k0=*pk0;
+    int p=*pp;
+    double Q=*pQ;
+    *B21=flsBF21fun(p, n, k2, k0, Q);
+    
+}
+
 
 void RobustBF (int *pn, int *pk2, int *pk0, double *pQ, double *B21)
 {

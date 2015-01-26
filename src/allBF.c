@@ -1,3 +1,4 @@
+#include <R.h>
 #include <stdio.h>
 #include<math.h>
 #include<stdlib.h>
@@ -34,9 +35,26 @@ double gBF21fun(int n, int k2, int k0, double Q)
 {
 	
 		double BF21=0.0;
-    BF21 = exp(((n-k2)/2.0)*log(1.0+n)-((n-k0)/2.0)*log(1.0+n*Q));
+        BF21 = exp(((n-k2)/2.0)*log(1.0+n)-((n-k0)/2.0)*log(1.0+n*Q));
+        if (!R_FINITE(BF21)){error("A Bayes factor is infinite.");}
 		return BF21;
 	
+}
+
+/* -----Fernandez, Ley and Steel-prior-------*/
+
+// The Bayes factor obtained with the the g-prior (in favour of
+// a model with k2 regressors and against the null with k0)
+
+double flsBF21fun(int p, int n, int k2, int k0, double Q)
+{
+    
+    int g=GSL_MAX(n, p*p);
+    double BF21=0.0;
+    if (!R_FINITE(BF21)){error("A Bayes factor is infinite.");}
+    BF21 = exp(((n-k2)/2.0)*log(1.0+g)-((n-k0)/2.0)*log(1.0+g*Q));
+    return BF21;
+    
 }
 
 
@@ -152,6 +170,7 @@ double RobustBF21fun(int n, int k2, int k0, double Q)
 	
 	
 	R1=T1*T2*T3;
+    if (!R_FINITE(R1)){error("A Bayes factor is infinite.");}
 	
 	return(R1);
 }
@@ -209,6 +228,7 @@ double LiangBF21fun(int n, int k2, int k0, double Q)
 {
     double LiangBF21=0.0;
     LiangBF21 = liang((double) n, (double) k2, (double) k0, Q);
+    if (!R_FINITE(LiangBF21)){error("A Bayes factor is infinite.");}
     return LiangBF21;
     
 }
@@ -268,6 +288,7 @@ double ZSBF21fun(int n, int k2, int k0, double Q)
 {
     double ZSBF21=0.0;
     ZSBF21 = zell ((double) n,(double) k2, (double) k0, Q);
+    if (!R_FINITE(ZSBF21)){error("A Bayes factor is infinite.");}
     return ZSBF21;
     
 }

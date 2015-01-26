@@ -4,18 +4,20 @@ function(x,option="dimension"){
   if (!inherits(x, "Bvs")) 
     warning("calling predict.Bvs(<fake-Bvs-object>) ...")
   p <- x$p
+  k <- x$k
   auxtp<- substr(tolower(option),1,1)
   
-  if (auxtp!="d" && auxtp!="j" && auxtp!="c" && auxtp!="n") 
+  if (auxtp!="d" && auxtp!="j" && auxtp!="c" && auxtp!="n") {
     stop("I am very sorry: type of plot not specified\n")
+  }
   
   #dimension probabilities
   if (auxtp=="d"){
     par(mar=c(5, 4, 4, 2) + 0.1,mfrow=c(1,1))
    if(x$method=="gibbs"){
-     barplot(x$postprobdim$Prob,main="Estimated Posterior Dimension Probabilities",xlab="Number of covariates in the model",ylab="Probability",names.arg=0:(p-1))
+     barplot(x$postprobdim,main="Estimated Posterior Dimension Probabilities",xlab="Number of covariates in the full model",ylab="Probability",names.arg=(0:p)+k)
    }else{
-    barplot(x$postprobdim$Prob,main="Posterior Dimension Probabilities",xlab="Number of covariates in the model",ylab="Probability",names.arg=0:(p-1))
+    barplot(x$postprobdim,main="Posterior Dimension Probabilities",xlab="Number of covariates in the full model",ylab="Probability",names.arg=(0:p)+k)
     }
   }
   #Special function for printing the joint and conditional probabilities. 
@@ -26,7 +28,7 @@ function(x,option="dimension"){
     
     
     #What do we do with the diagonal? 
-    diag(x)<- 0
+    #diag(x)<- diagonal
     #What do we do with the NA's? 
     x[is.na(x)]<- 0
     
@@ -84,7 +86,8 @@ function(x,option="dimension"){
         
      if( !is.null(title) ){
           title(main=title)
-        }# Title on the top
+        
+          }# Title on the top
     
     # Data Map
     par(mar = c(3,5,2.5,2))
@@ -112,27 +115,28 @@ function(x,option="dimension"){
  #Joint posterior probabilities
   if(auxtp=="j"){
     if(x$method=="gibbs"){
-      myImagePlot(x$jointinclprob, scale=as.vector(x$inclprob[,1]), title="Estimated Joint Inclusion Probabilities")
+      myImagePlot(x$jointinclprob, scale=as.vector(x$inclprob), title="Estimated Joint Inclusion Probabilities")
     }else{
-      myImagePlot(x$jointinclprob, scale=as.vector(x$inclprob[,1]), title="Joint Inclusion Probabilities")
+      myImagePlot(x$jointinclprob, scale=as.vector(x$inclprob), title="Joint Inclusion Probabilities")
     }
-    
-    
+    prob_joint <- as.matrix(x$jointinclprob)
+    return(prob_joint)
     }
 
  #conditional posterior probabilities
   if(auxtp=="c"){
     prob_joint <- as.matrix(x$jointinclprob)
     prob_cond <- as.matrix(x$jointinclprob)
-    for(i in 1:(p-1))
+    for(i in 1:p){
       prob_cond[i,]<-prob_joint[i,]/prob_joint[i,i]
+      prob_cond[i,i] <- 1}
     
     if(x$method=="gibbs"){
-      myImagePlot(prob_cond, scale=as.vector(x$inclprob[,1]), title="Estimated Inclusion prob. of column var. given the row var. is included")
+      myImagePlot(prob_cond, scale=as.vector(x$inclprob), diagonal=1, title="Estimated Inclusion prob. of column var. given the row var. is included")
     }else{
-      myImagePlot(prob_cond, scale=as.vector(x$inclprob[,1]), title="Inclusion prob. of column var. given the row var. is included")
+      myImagePlot(prob_cond, scale=as.vector(x$inclprob), diagonal=1,  title="Inclusion prob. of column var. given the row var. is included")
     }
-    
+    return(prob_cond)
     }
   #conditional posterior probabilities given Not a variable  
   if(auxtp=="n"){
@@ -142,8 +146,10 @@ function(x,option="dimension"){
         for (i in 1:dim(result)[1]){
           for (j in 1:dim(result)[1]){
             result[i,j]<-
-              (miobject$inclprob[j,1]-miobject$jointinclprob[i,j])/(1-miobject$inclprob[i,1])#REVISAR  P(j|Not.i)=(1-P(i|j))P(j)/(1-P(i))=(P(j)-P(j,i))/(1-P(i))  
-          }}
+              (miobject$inclprob[j]-miobject$jointinclprob[i,j])/(1-miobject$inclprob[i])#REVISAR  P(j|Not.i)=(1-P(i|j))P(j)/(1-P(i))=(P(j)-P(j,i))/(1-P(i))  
+          }
+        result[i,i]<-0
+        }
         colnames(result)<- colnames(miobject$jointinclprob)
         rownames(result)<- paste("Not.",colnames(miobject$jointinclprob),sep="")
         result
@@ -151,10 +157,11 @@ function(x,option="dimension"){
       AgivenNotB <- pAgivenNotB(x)
      
       if(x$method=="gibbs"){
-        myImagePlot(AgivenNotB, scale=as.vector(x$inclprob[,1]), title="Est. Incl. probability of column var. given the row var. is NOT included")
+        myImagePlot(AgivenNotB, scale=as.vector(x$inclprob), title="Est. Incl. probability of column var. given the row var. is NOT included")
       }else{
-        myImagePlot(AgivenNotB, scale=as.vector(x$inclprob[,1]), title="Incl. probability of column var. given the row var. is NOT included")
+        myImagePlot(AgivenNotB, scale=as.vector(x$inclprob), title="Incl. probability of column var. given the row var. is NOT included")
       }
-     
+      prob_not <- AgivenNotB
+     return (prob_not)
   }
 }
