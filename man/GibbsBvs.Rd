@@ -11,22 +11,23 @@ to explore the model space and frequency of "visits" to construct the estimates.
 \usage{
 GibbsBvs(formula, fixed.cov = c("Intercept"), data, prior.betas = "Robust",
          prior.models = "Constant", n.iter=1000, init.model = "Full",
-         n.burnin = 50, n.thin=max(1, floor(n.iter / 1000)), 
-         time.test = TRUE, priorprobs=NULL)
+         n.burnin = 50, n.thin=1, 
+         time.test = TRUE, priorprobs=NULL, seed = runif(1,0,16091956))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
  \item{formula }{Formula defining the most complex regression model in the analysis. See details.}
-  \item{fixed.cov}{A character vector with the names of the covariates that will be considered as fixed (no variable selection over these). This argument provides an implicit definition of the simplest model considered. Default is "Intercept". Use "Null" if selection should be performed over all the variables defined by \code{formula}}
+  \item{fixed.cov}{A character vector with the names of the covariates that will be considered as fixed (no variable selection over these). This argument provides an implicit definition of the simplest model considered. Default is "Intercept". Use NULL if selection should be performed over all the variables defined by \code{formula}}
   \item{data }{data frame containing the data.}
   \item{prior.betas }{Prior distribution for regression parameters within each model. Possible choices include "Robust", "Liangetal", "gZellner",  "ZellnerSiow" and "FLS" (see details).}
   \item{prior.models }{Prior distribution over the model space. Possible choices are "Constant", "ScottBerger"  and "User" (see details).}
   \item{n.iter }{The total number of iterations performed after the burn in process.}
   \item{init.model }{The model at which the simulation process starts. Options include "Null" (the model only with the covariates specified in \code{fixed.cov}), "Full" (the model defined by \code{formula}), "Random" (a randomly selected model) and a vector with p (the number of covariates to select from) zeros and ones defining a model.}
   \item{n.burnin }{Length of burn in, i.e. number of iterations to discard at the beginning.}
-  \item{n.thin}{Thinning rate. Must be a positive integer.  Set 'n.thin' > 1 to save memory and computation time if 'n.iter' is large. Default is 'max(1, floor(n.iter / 1000)'. This parameter jointly with \code{n.iter} sets the number of simulations kept and used to construct the estimates}
+  \item{n.thin}{Thinning rate. Must be a positive integer.  Set 'n.thin' > 1 to save memory and computation time if 'n.iter' is large. Default is 1. This parameter jointly with \code{n.iter} sets the number of simulations kept and used to construct the estimates so is important to keep in mind that a large value for 'n.thin' can reduce the precision of the results.}
   \item{time.test }{If TRUE and the number of variables is large (>=21) a preliminary test to estimate computational time is performed.}
   \item{priorprobs}{A p+1 dimensional vector defining the prior probabilities Pr(M_i) (should be used in the case where \code{prior.models}="User"; see the details in \code{\link[BayesVarSel]{Bvs}}.)}
+  \item{seed}{A seed to initialize the random number generator}
 }
 \details{
 This is a heuristic approximation to the function \code{\link[BayesVarSel]{Bvs}} so the details there apply also here.
@@ -53,7 +54,7 @@ The algorithm implemented is a Gibbs sampling-based searching algorithm original
 }
 
 \references{
-Garcia-Donato, G. and Martinez-Beneito, M.A. (2013) On sampling strategies in Bayesian variable selection problems with large model spaces. Journal of the American Statistical Association, 108: 340-352. 
+Garcia-Donato, G. and Martinez-Beneito, M.A. (2013)<DOI:10.1080/01621459.2012.742443> On sampling strategies in Bayesian variable selection problems with large model spaces. Journal of the American Statistical Association, 108: 340-352. 
   
 George E. and McCulloch R. (1997) Approaches for Bayesian variable selection. Statistica Sinica, 7, 339:372.
 }

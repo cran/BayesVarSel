@@ -140,14 +140,21 @@ function(x,option="dimension"){
     }
   #conditional posterior probabilities given Not a variable  
   if(auxtp=="n"){
+    
       #auxiliar function to compute de A Given not B matrix
       pAgivenNotB<- function(miobject){
         result<- 0*miobject$jointinclprob
         for (i in 1:dim(result)[1]){
+          if(miobject$inclprob[i]==1){
+            warning(paste("The inclusion probabilities of", miobject$variables[i], "is equal to 1. The conditional posterior probability of any other variable given it can not be computed. Cero is returned instead\n",sep=" "))
+                    for (j in 1:dim(result)[1]){
+                      result[i,j]<-0
+                    }
+          }else{
           for (j in 1:dim(result)[1]){
             result[i,j]<-
               (miobject$inclprob[j]-miobject$jointinclprob[i,j])/(1-miobject$inclprob[i])#REVISAR  P(j|Not.i)=(1-P(i|j))P(j)/(1-P(i))=(P(j)-P(j,i))/(1-P(i))  
-          }
+          }}
         result[i,i]<-0
         }
         colnames(result)<- colnames(miobject$jointinclprob)
@@ -157,9 +164,9 @@ function(x,option="dimension"){
       AgivenNotB <- pAgivenNotB(x)
      
       if(x$method=="gibbs"){
-        myImagePlot(AgivenNotB, scale=as.vector(x$inclprob), title="Est. Incl. probability of column var. given the row var. is NOT included")
+        myImagePlot(AgivenNotB, scale=as.vector(x$inclprob), title="Est. Incl. prob of column var. given the row var. is NOT included")
       }else{
-        myImagePlot(AgivenNotB, scale=as.vector(x$inclprob), title="Incl. probability of column var. given the row var. is NOT included")
+        myImagePlot(AgivenNotB, scale=as.vector(x$inclprob), title="Incl. prob of column var. given the row var. is NOT included")
       }
       prob_not <- AgivenNotB
      return (prob_not)

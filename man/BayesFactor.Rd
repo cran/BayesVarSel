@@ -52,24 +52,22 @@ Gonzalo Garcia-Donato and Anabel Forte
 Maintainer: <anabel.forte@uv.es>
 }
 \references{
-  Bayarri, M.J., Berger, J.O., Forte, A. and Garcia-Donato, G. (2012) Criteria for Bayesian Model choice with Application to Variable Selection. The Annals of Statistics. 40: 1550-1557.
+  Bayarri, M.J., Berger, J.O., Forte, A. and Garcia-Donato, G. (2012)<DOI:10.1214/12-aos1013> Criteria for Bayesian Model choice with Application to Variable Selection. The Annals of Statistics. 40: 1550-1557.
 
-  Bayarri, M.J. and Garcia-Donato, G. (2007). Extending conventional priors for testing general hypotheses in linear models. Biometrika, 94:135-152.
+  Bayarri, M.J. and Garcia-Donato, G. (2007)<DOI:10.1093/biomet/asm014> Extending conventional priors for testing general hypotheses in linear models. Biometrika, 94:135-152.
   
-  Barbieri, M and Berger, J (2004). Optimal Predictive Model Selection. The Annals of Statistics, 32, 870-897.
+  Barbieri, M and Berger, J (2004)<DOI:10.1214/009053604000000238> Optimal Predictive Model Selection. The Annals of Statistics, 32, 870-897.
 
-  Fernandez, C., Ley, E. and Steel, M.F.J. (2001) Benchmark priors for Bayesian model averaging. Journal of Econometrics, 100, 381-427.
+  Fernandez, C., Ley, E. and Steel, M.F.J. (2001)<DOI:10.1016/s0304-4076(00)00076-2> Benchmark priors for Bayesian model averaging. Journal of Econometrics, 100, 381-427.
   
-  Liang, F., Paulo, R., Molina, G., Clyde, M. and  Berger,
-  J.O. (2008) Mixtures of  g-priors for Bayesian Variable
-  Selection. Journal of the American Statistical Association. 103:410-423.%  \cr \url{http://dx.doi.org/10.1198/016214507000001337}
+  Liang, F., Paulo, R., Molina, G., Clyde, M. and  Berger,J.O. (2008)<DOI:10.1198/016214507000001337> Mixtures of  g-priors for Bayesian Variable Selection. Journal of the American Statistical Association. 103:410-423
+    
+  Zellner, A. and Siow, A. (1980)<DOI:10.1007/bf02888369> Posterior Odds Ratio for Selected Regression Hypotheses. In Bayesian Statistics 1 (J.M. Bernardo, M. H. DeGroot, D. V. Lindley and A. F. M. Smith, eds.) 585-603. Valencia: University Press. 
   
-  Zellner, A. and Siow, A. (1980). Posterior Odds Ratio for Selected Regression Hypotheses. In Bayesian Statistics 1 (J.M. Bernardo, M. H. DeGroot, D. V. Lindley and A. F. M. Smith, eds.) 585-603. Valencia: University Press. 
-  
-  Zellner, A. and Siow, A. (1984). Basic Issues in Econometrics. Chicago: University of
+  Zellner, A. and Siow, A. (1984) Basic Issues in Econometrics. Chicago: University of
 Chicago Press.
  
-  Zellner, A. (1986). On Assessing Prior Distributions and Bayesian Regression Analysis with g-prior Distributions. In Bayesian Inference and Decision techniques: Essays in Honor of Bruno de Finetti (A. Zellner, ed.) 389-399. Edward Elgar Publishing
+  Zellner, A. (1986)<DOI:10.2307/2233941> On Assessing Prior Distributions and Bayesian Regression Analysis with g-prior Distributions. In Bayesian Inference and Decision techniques: Essays in Honor of Bruno de Finetti (A. Zellner, ed.) 389-399. Edward Elgar Publishing
 Limited. 
 
 }

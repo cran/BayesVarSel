@@ -18,7 +18,7 @@ The following data relates to an engineering application that was interested in 
   }
 }
 \references{
-	Woods, H., Steinour, H. and Starke, H. (1932). 
+	Woods, H., Steinour, H. and Starke, H. (1932)<DOI:10.1021/ie50275a002>
 	Effect of Composition of Porland Cement on Heat Evolved During Hardening. Industrial 	and Engineering Chemistry Research, 24, 1207-1214.
 }
 \examples{

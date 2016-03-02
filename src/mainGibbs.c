@@ -23,7 +23,7 @@
 //#include "allBF.c"
 #include "priorprob.h"
 //#include "priorprob.c"
-void GibbsgConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsgConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -50,12 +50,8 @@ void GibbsgConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], in
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -364,7 +360,7 @@ void GibbsgConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], in
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsgSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsgSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -391,12 +387,8 @@ void GibbsgSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -705,7 +697,7 @@ void GibbsgSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsgUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsgUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -732,12 +724,8 @@ void GibbsgUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -1046,7 +1034,7 @@ void GibbsgUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsRobustConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsRobustConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -1073,12 +1061,8 @@ void GibbsRobustConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -1387,7 +1371,7 @@ void GibbsRobustConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsRobustSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsRobustSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -1414,12 +1398,8 @@ void GibbsRobustSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], 
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -1728,7 +1708,7 @@ void GibbsRobustSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], 
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsRobustUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsRobustUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -1755,12 +1735,8 @@ void GibbsRobustUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[]
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -2069,7 +2045,7 @@ void GibbsRobustUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[]
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsLiangConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsLiangConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -2096,12 +2072,8 @@ void GibbsLiangConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[]
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -2410,7 +2382,7 @@ void GibbsLiangConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[]
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsLiangSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsLiangSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -2437,12 +2409,8 @@ void GibbsLiangSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -2751,7 +2719,7 @@ void GibbsLiangSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsLiangUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsLiangUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -2778,12 +2746,8 @@ void GibbsLiangUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[],
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -3092,7 +3056,7 @@ void GibbsLiangUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[],
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsZSConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsZSConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -3119,12 +3083,8 @@ void GibbsZSConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -3433,7 +3393,7 @@ void GibbsZSConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsZSSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsZSSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -3460,12 +3420,8 @@ void GibbsZSSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int 
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -3774,7 +3730,7 @@ void GibbsZSSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int 
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsZSUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsZSUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -3801,12 +3757,8 @@ void GibbsZSUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], in
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -4115,7 +4067,7 @@ void GibbsZSUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], in
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsflsConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsflsConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -4142,12 +4094,8 @@ void GibbsflsConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], 
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -4456,7 +4404,7 @@ void GibbsflsConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], 
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsflsSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsflsSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -4483,12 +4431,8 @@ void GibbsflsSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);
@@ -4797,7 +4741,7 @@ void GibbsflsSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int
 	*time=(double) (clock()-tiempo_ejec)/CLOCKS_PER_SEC;
 
 }
-void GibbsflsUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin)
+void GibbsflsUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], int *pBurnin, double *time, int *pknull, int *pnthin, int *pseed)
 {
 	//Version where the null model is only the error term and vs is performed over the whole design
 	//matrix. It keeps track of the possibility that this is used in combination with a previous
@@ -4824,12 +4768,8 @@ void GibbsflsUser (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], i
 	strcpy(home,*homePath);
 	//-----------
 	
-	const gsl_rng_type * T; 
-	gsl_rng * ran;
-	gsl_rng_env_setup();
-	T = gsl_rng_default; 
-	ran = gsl_rng_alloc (T);
-	
+    gsl_rng * ran = gsl_rng_alloc(gsl_rng_mt19937);
+    gsl_rng_set(ran, *pseed);
 	//double info=pow(2,p);
 	
 	//Rprintf("The problem has %d variables and %d observations\n", p, n);

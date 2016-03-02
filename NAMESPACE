@@ -3,6 +3,11 @@ useDynLib("BayesVarSel")
 
 import(parallel, MASS)
 
+importFrom("grDevices", "gray.colors")
+importFrom("graphics", "axis", "barplot", "image", "layout", "par","plot")
+importFrom("stats", "as.formula", "lm", "rbinom","runif")
+importFrom("utils", "read.table", "write.table")
+
 # Define which functions people can see.
 export(Bvs, PBvs, GibbsBvs, plotBvs, BayesFactor) 
 S3method(print, BayesFactor)

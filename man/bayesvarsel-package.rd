@@ -16,8 +16,8 @@ The interaction with the package is through a friendly interface that syntactica
 \tabular{ll}{
 Package: \tab BayesVarSel\cr
 Type: \tab Package\cr
-Version: \tab 1.6.1\cr
-Date: \tab 2015-01-01\cr
+Version: \tab 1.6.2\cr
+Date: \tab 2015-10-31\cr
 License: \tab GPL-2\cr
 }
 }
@@ -28,22 +28,19 @@ Maintainer: Anabel Forte \email{anabel.forte@uv.es}
 }
 \references{
 
-  Bayarri, M.J., Berger, J.O., Forte, A. and Garcia-Donato, G. (2012) Criteria for Bayesian Model choice with Application to Variable Selection. The Annals of Statistics. 40: 1550-1577
+  Bayarri, M.J., Berger, J.O., Forte, A. and Garcia-Donato, G. (2012)<DOI:10.1214/12-aos1013> Criteria for Bayesian Model choice with Application to Variable Selection. The Annals of Statistics. 40: 1550-1577
 
-  Fernandez, C., Ley, E. and Steel, M.F.J. (2001) Benchmark priors for Bayesian model averaging. Journal of Econometrics, 100, 381-427.  
+  Fernandez, C., Ley, E. and Steel, M.F.J. (2001)<DOI:10.1016/s0304-4076(00)00076-2> Benchmark priors for Bayesian model averaging. Journal of Econometrics, 100, 381-427.  
 
-   Garcia-Donato, G. and Martinez-Beneito, M.A. (2013) On sampling strategies in Bayesian variable selection problems with large model spaces. Journal of the American Statistical Association. 108: 340-352.
+   Garcia-Donato, G. and Martinez-Beneito, M.A. (2013)<DOI:10.1080/01621459.2012.742443> On sampling strategies in Bayesian variable selection problems with large model spaces. Journal of the American Statistical Association. 108: 340-352.
   
-  Liang, F., Paulo, R., Molina, G., Clyde, M. and  Berger,
-  J.O. (2008) Mixtures of  g-priors for Bayesian Variable
-  Selection. Journal of the American Statistical Association. 103:410-423.%  \cr \url{http://dx.doi.org/10.1198/016214507000001337}
+  Liang, F., Paulo, R., Molina, G., Clyde, M. and  Berger, J.O. (2008)<DOI:10.1198/016214507000001337> Mixtures of  g-priors for Bayesian Variable Selection. Journal of the American Statistical Association. 103:410-423.
   
-  Zellner, A. and Siow, A. (1980). Posterior Odds Ratio for Selected Regression Hypotheses. In Bayesian Statistics 1 (J.M. Bernardo, M. H. DeGroot, D. V. Lindley and A. F. M. Smith, eds.) 585-603. Valencia: University Press. 
+  Zellner, A. and Siow, A. (1980)<DOI:10.1007/bf02888369>. Posterior Odds Ratio for Selected Regression Hypotheses. In Bayesian Statistics 1 (J.M. Bernardo, M. H. DeGroot, D. V. Lindley and A. F. M. Smith, eds.) 585-603. Valencia: University Press. 
   
-  Zellner, A. and Siow, A. (1984). Basic Issues in Econometrics. Chicago: University of
-Chicago Press.
+  Zellner, A. and Siow, A. (1984) Basic Issues in Econometrics. Chicago: University of Chicago Press.
  
-  Zellner, A. (1986). On Assessing Prior Distributions and Bayesian Regression Analysis with g-prior Distributions. In Bayesian Inference and Decision techniques: Essays in Honor of Bruno de Finetti (A. Zellner, ed.) 389-399. Edward Elgar Publishing
+  Zellner, A. (1986)<DOI:10.2307/2233941> On Assessing Prior Distributions and Bayesian Regression Analysis with g-prior Distributions. In Bayesian Inference and Decision techniques: Essays in Honor of Bruno de Finetti (A. Zellner, ed.) 389-399. Edward Elgar Publishing
 Limited. 
 
 }

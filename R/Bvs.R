@@ -217,41 +217,41 @@ estim.time<- 0
 
 if (time.test && p>=18){
   cat("Time test. . . .\n")
-  result<- switch(method,
-                  "gc"=.C("gConst", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-                          as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-                  "gs"=.C("gSB", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-                          as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-                  "gu"=.C("gUser", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-                          as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),	
-                  "rc"=.C("RobustConst", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-                          as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-                  "rs"=.C("RobustSB", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-                          as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-                  "ru"=.C("RobustUser", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-                          as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-                  "lc"=.C("LiangConst", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-                          as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-                  "ls"=.C("LiangSB", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-                          as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-                  "lu"=.C("LiangUser", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-                          as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-                  "zc"=.C("ZSConst", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-                          as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-                  "zs"=.C("ZSSB", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-                          as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-                  "zu"=.C("ZSUser", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-                          as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-		          "fc"=.C("flsConst", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-		                  as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-		          "fs"=.C("flsSB", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-		                  as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
-		          "fu"=.C("flsUser", as.character(""), as.integer(n), as.integer(p), as.integer(1), 
-		                  as.integer(2^(p-2)-1999), as.integer(2^(p-2)+2000), as.character(wd), as.double(estim.time), as.integer(knull))
+aux <- system.time(  result<- switch(method,
+                  "gc"=.C("gConst", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+                          as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+                  "gs"=.C("gSB", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+                          as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+                  "gu"=.C("gUser", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+                          as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),	
+                  "rc"=.C("RobustConst", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+                          as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+                  "rs"=.C("RobustSB", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+                          as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+                  "ru"=.C("RobustUser", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+                          as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+                  "lc"=.C("LiangConst", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+                          as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+                  "ls"=.C("LiangSB", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+                          as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+                  "lu"=.C("LiangUser", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+                          as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+                  "zc"=.C("ZSConst", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+                          as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+                  "zs"=.C("ZSSB", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+                          as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+                  "zu"=.C("ZSUser", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+                          as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+		          "fc"=.C("flsConst", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+		                  as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+		          "fs"=.C("flsSB", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+		                  as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull)),
+		          "fu"=.C("flsUser", as.character(""), as.integer(n), as.integer(p), as.integer(4000), 
+		                  as.integer(2^(p-1)-1999), as.integer(2^(p-1)+2000), as.character(wd), as.double(estim.time), as.integer(knull))
 						  
-  )
+  ))
   
-  estim.time<- result[[8]]*2^(p-1)/(60*4000) 
+  estim.time<- result[[8]]*2^(p)/(60*4000) 
   cat("The problem would take ", estim.time, "minutes (approx.) to run\n")
   ANSWER <- readline("Do you want to continue?(y/n) then press enter.\n")
   while (substr(ANSWER, 1, 1) != "n" & substr(ANSWER, 1, 1) !="y"){
