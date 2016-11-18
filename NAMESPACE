@@ -1,16 +1,20 @@
 # Tell R to load the shared object <BayesVarSel.so>.
 useDynLib("BayesVarSel")
 
-import(parallel, MASS)
+import(parallel, MASS, mvtnorm)
 
-importFrom("grDevices", "gray.colors")
-importFrom("graphics", "axis", "barplot", "image", "layout", "par","plot")
-importFrom("stats", "as.formula", "lm", "rbinom","runif")
+importFrom("grDevices", "gray.colors","gray")
+importFrom("graphics", "axis", "barplot", "image", "layout", "par","plot", "hist", "text")
+importFrom("stats", "as.formula", "lm", "rbinom","runif","density", "quantile")
 importFrom("utils", "read.table", "write.table")
 
+
 # Define which functions people can see.
-export(Bvs, PBvs, GibbsBvs, plotBvs, BayesFactor) 
-S3method(print, BayesFactor)
+export(Bvs, PBvs, GibbsBvs, plotBvs, Btest, BMAcoeff,predictBvs,Jointness,histBMA) 
+S3method(print, Btest)
 S3method(summary, Bvs)
 S3method(print, Bvs)
 S3method(print, summary.Bvs)
+S3method(print, jointness)
+#S3method(predict, Bvs)
+

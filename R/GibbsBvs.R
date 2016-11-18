@@ -1,6 +1,6 @@
 GibbsBvs <-
-function(formula,fixed.cov=c("Intercept"), data,  prior.betas="Robust", prior.models="Constant",  n.iter=1000, init.model="Full", 
-        n.burnin=50, n.thin=1, time.test=TRUE, priorprobs=NULL, seed=runif(1,0,16091956)){
+function(formula,fixed.cov=c("Intercept"), data,  prior.betas="Robust", prior.models="ScottBerger",  n.iter=10000, init.model="Full", 
+        n.burnin=500, n.thin=1, time.test=TRUE, priorprobs=NULL, seed=runif(1,0,16091956)){
 
 
   #Let's define the result 

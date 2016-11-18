@@ -8,7 +8,7 @@ Bayesian Variable Selection for linear regression models using parallel computin
 }
 \usage{
 PBvs(formula, fixed.cov=c("Intercept"), data, prior.betas = "Robust",
-     prior.models = "Constant", n.keep = 10, n.nodes = 2, 
+     prior.models = "ScottBerger", n.keep = 10, n.nodes = 2, 
      priorprobs=NULL, time.test=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -71,7 +71,8 @@ Limited.
 
 \keyword{ package }
 \seealso{
-\code{\link[BayesVarSel]{plotBvs}} for different descriptive plots of the results.
+\code{\link[BayesVarSel]{plotBvs}} for different descriptive plots of the results, \code{\link[BayesVarSel]{BMAcoeff}} for obtaining model averaged simulations of regression coefficients and \code{\link[BayesVarSel]{predictBvs}} for predictions.
+
 
 \code{\link[BayesVarSel]{GibbsBvs}} which implements a heuristic approximation to the problem based on Gibbs sampling.
 }

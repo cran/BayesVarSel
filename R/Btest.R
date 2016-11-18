@@ -1,9 +1,4 @@
-#Bayes factors and posterior probabilities with BayesVarSel
-#should be a model in the list of models which is nested in all the others
-#(taken as the one with largest SSE)
-BayesFactor<- function(models, data, prior.betas="Robust", prior.models="Constant", priorprobs=NULL){
-	#cat("---------\n")
-	#cat("Important note: for these results to make sense, the simplest model should be nested in all the others\n")
+Btest<- function(models, data, prior.betas="Robust", prior.models="Constant", priorprobs=NULL, relax.nest=FALSE){
 	#N is the number of models:
 	N<- length(models)
 	#n is the sample size
@@ -54,7 +49,7 @@ BayesFactor<- function(models, data, prior.betas="Robust", prior.models="Constan
 	if (pfb!="f"){			
 	 for (i in (1:N)[-nullmodel]){
 		#check if the "null" model is nested in all the others
-		if (sum(covar.list[[nullmodel]]%in%covar.list[[i]])<Dim[nullmodel]){stop("There is no a model nested in all the others\n")}
+		if (!relax.nest & sum(covar.list[[nullmodel]]%in%covar.list[[i]])<Dim[nullmodel]){stop("Unable to determine a simpler model using names\n")}
 		Qi0<- SSE[i]/SSE[nullmodel]
 		BFi0[i]<- .C(method, as.integer(n), as.integer(Dim[i]), as.integer(Dim[nullmodel]), as.double(Qi0), as.double(0.0))[5][[1]]		
 	 }
@@ -64,7 +59,7 @@ BayesFactor<- function(models, data, prior.betas="Robust", prior.models="Constan
 		p<- max(Dim)-min(Dim)
 	 for (i in (1:N)[-nullmodel]){
 		#check if the "null" model is nested in all the others
-		if (sum(covar.list[[nullmodel]]%in%covar.list[[i]])<Dim[nullmodel]){stop("There is no a model nested in all the others\n")}
+		if (!relax.nest & sum(covar.list[[nullmodel]]%in%covar.list[[i]])<Dim[nullmodel]){stop("There is no a model nested in all the others\n")}
 		Qi0<- SSE[i]/SSE[nullmodel]
 		BFi0[i]<- .C(method, as.integer(p), as.integer(n), as.integer(Dim[i]), as.integer(Dim[nullmodel]), as.double(Qi0), as.double(0.0))[6][[1]]		
 	 }
@@ -80,7 +75,7 @@ BayesFactor<- function(models, data, prior.betas="Robust", prior.models="Constan
 	result$PostProbi<- PostProbi
 	result$models<- models
 	result$nullmodel<- nullmodel
-	class(result)<- "BayesFactor"
+	class(result)<- "Btest"
 	result	
 }
 

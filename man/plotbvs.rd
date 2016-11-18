@@ -20,6 +20,7 @@ plotBvs(x, option = "dimension")
 \details{
 If \code{option}="dimension"  this function returns a barplot of the posterior distribution of the dimension of the true model. If \code{option}="joint" an image plot of the joint inclusion probabilities is returned. If \code{option}="conditional" an image plot of the conditional inclusion probabilities. These should be read as the probabilty that the variable in the column is part of the true model if the corresponding variables on the row is. Finally, if \code{option}="not" the image plot that is returned is that of the the probabilty that the variable in the column is part of the true model if the corresponding variables on the row is not.
 }
+\value{If \code{option}="joint", "conditional" or "not" \code{plotBvs} also returns an object of class \code{matrix} with the numeric values of the printed probabilities.}
 \author{
 Gonzalo Garcia-Donato and Anabel Forte
 

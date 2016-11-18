@@ -1,6 +1,6 @@
-\name{BayesFactor}
-\alias{BayesFactor}
-\alias{print.BayesFactor}
+\name{Btest}
+\alias{Btest}
+\alias{print.Btest}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Bayes factors and posterior probabilities for linear regression models
@@ -9,8 +9,8 @@ Bayes factors and posterior probabilities for linear regression models
 Computes the Bayes factors and posterior probabilities of a list of linear regression models proposed to explain a common response variable over the same dataset 
 }
 \usage{
-BayesFactor(models, data, prior.betas = "Robust", 
-    prior.models = "Constant", priorprobs=NULL)
+Btest(models, data, prior.betas = "Robust", 
+    prior.models = "Constant", priorprobs=NULL, relax.nest=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +19,7 @@ BayesFactor(models, data, prior.betas = "Robust",
   \item{prior.betas }{Prior distribution for regression parameters within each model. Possible choices include "Robust", "Liangetal", "gZellner", "ZellnerSiow" and "FLS" (see details).}
   \item{prior.models }{Prior probabilities of the models. Possible choices are "Constant" and "User" (see details).}
   \item{priorprobs}{A named list (same length and names as in argument \code{models}) with the prior probabilities of the models.)}
+  \item{relax.nest}{By default, the names of covariates in the different models are used to identify the null model (the model which is nested in all the others). An error is produced if such identification fails. This check is not performed if this argument is set to TRUE in which case the model with a smaller sum of squared errors is taken as the null model. }	
 }
 \details{The Bayes factors, Bi, are expressed in relation with the simplest model (the one nested in all the others). Then, the posterior probabilities of the entertained models are obtained as
 
@@ -28,7 +29,7 @@ where Pr(Mi) is the prior probability of model Mi and C is the normalizing const
 
 The Bayes factor B_i depends on the prior assigned for the regression parameters in Mi. 
 
-\code{BayesFactor} implements a number of popular choices plus the "Robust" prior recently proposed by Bayarri et al (2012). The "Robust" prior is the default choice for both theoretical (see the reference for details) and computational reasons since it produces Bayes factors with closed-form expressions. The "gZellner" prior implemented corresponds to the prior in Zellner (1986) with g=n while the "Liangetal" prior is the hyper-g/n with a=3 (see the original paper Liang et al 2008, for details). "ZellnerSiow" is the multivariate Cauchy prior proposed by Zellner and Siow (1980, 1984), further studied by Bayarri and Garcia-Donato (2007). Finally, "FLS" is the prior recommended by Fernandez, Ley and Steel (2001) which is the prior in Zellner (1986) with g=max(n, p*p) p being the difference between the dimension of the most complex model and the simplest one.
+\code{Btest} implements a number of popular choices plus the "Robust" prior recently proposed by Bayarri et al (2012). The "Robust" prior is the default choice for both theoretical (see the reference for details) and computational reasons since it produces Bayes factors with closed-form expressions. The "gZellner" prior implemented corresponds to the prior in Zellner (1986) with g=n while the "Liangetal" prior is the hyper-g/n with a=3 (see the original paper Liang et al 2008, for details). "ZellnerSiow" is the multivariate Cauchy prior proposed by Zellner and Siow (1980, 1984), further studied by Bayarri and Garcia-Donato (2007). Finally, "FLS" is the prior recommended by Fernandez, Ley and Steel (2001) which is the prior in Zellner (1986) with g=max(n, p*p) p being the difference between the dimension of the most complex model and the simplest one.
 
 With respect to the prior over the model space Pr(Mi) three possibilities are implemented: "Constant", under which every model has the same prior probability and "User". With this last option, the prior probabilities are defined through the named list \code{priorprobs}. These probabilities can be given unnormalized.
 
@@ -39,7 +40,7 @@ Limitations: the error "A Bayes factor is infinite.". Bayes factors can be extre
 }
 
 
-\value{\code{BayesFactor} returns an object of type \code{BayesFactor} which is a \code{list} with the following elements:
+\value{\code{Btest} returns an object of type \code{Btest} which is a \code{list} with the following elements:
 \item{BFio }{A vector with the Bayes factor of each model to the simplest model.}
 \item{PostProbi }{A vector with the posterior probabilities of each model.}
 \item{models }{A list with the entertained models. }
@@ -89,17 +90,17 @@ model4<- as.formula("y~1+Prob+So")
 model5<- as.formula("y~.")
 
 #Equal prior probabilities for models:
-crime.BF<- BayesFactor(models=list(basemodel=model1, 
+crime.BF<- Btest(models=list(basemodel=model1, 
 	ProbTimemodel=model2, ProbPolmodel=model3, 
 	ProbSomodel=model4, fullmodel=model5), data=UScrime)
 
 #Another configuration of prior probabilities of models:
-crime.BF2<- BayesFactor(models=list(basemodel=model1, ProbTimemodel=model2, 
+crime.BF2<- Btest(models=list(basemodel=model1, ProbTimemodel=model2, 
 	ProbPolmodel=model3, ProbSomodel=model4, fullmodel=model5), 
 	data=UScrime, prior.models = "User", priorprobs=list(basemodel=1/8,
 	ProbTimemodel=1/8, ProbPolmodel=1/2, ProbSomodel=1/8, fullmodel=1/8))
 #same as:
-#crime.BF2<- BayesFactor(models=list(basemodel=model1, ProbTimemodel=model2, 
+#crime.BF2<- Btest(models=list(basemodel=model1, ProbTimemodel=model2, 
 	#ProbPolmodel=model3,ProbSomodel=model4, #fullmodel=model5), data=UScrime, 
 	#prior.models = "User", priorprobs=list(basemodel=1, ProbTimemodel=1, 
 	#ProbPolmodel=4, #ProbSomodel=1, fullmodel=1))

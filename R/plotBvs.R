@@ -2,7 +2,7 @@ plotBvs <-
 function(x,option="dimension"){
   
   if (!inherits(x, "Bvs")) 
-    warning("calling predict.Bvs(<fake-Bvs-object>) ...")
+    warning("calling plotBvs(<fake-Bvs-object>) ...")
   p <- x$p
   k <- x$k
   auxtp<- substr(tolower(option),1,1)
@@ -15,9 +15,9 @@ function(x,option="dimension"){
   if (auxtp=="d"){
     par(mar=c(5, 4, 4, 2) + 0.1,mfrow=c(1,1))
    if(x$method=="gibbs"){
-     barplot(x$postprobdim,main="Estimated Posterior Dimension Probabilities",xlab="Number of covariates in the full model",ylab="Probability",names.arg=(0:p)+k)
+     barplot(x$postprobdim,main="Estimated Posterior Dimension Probabilities",xlab="Number of covariates in the true model",ylab="Probability",names.arg=(0:p)+k)
    }else{
-    barplot(x$postprobdim,main="Posterior Dimension Probabilities",xlab="Number of covariates in the full model",ylab="Probability",names.arg=(0:p)+k)
+    barplot(x$postprobdim,main="Posterior Dimension Probabilities",xlab="Number of covariates in the true model",ylab="Probability",names.arg=(0:p)+k)
     }
   }
   #Special function for printing the joint and conditional probabilities. 
@@ -123,6 +123,8 @@ function(x,option="dimension"){
     return(prob_joint)
     }
 
+  
+  
  #conditional posterior probabilities
   if(auxtp=="c"){
     prob_joint <- as.matrix(x$jointinclprob)

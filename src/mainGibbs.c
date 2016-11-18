@@ -183,6 +183,7 @@ void GibbsgConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], in
         //the bayes factor in favor of Mi and against M0
         k2e=k2+knull;
         oldPBF= gBF21fun(n,k2e,knull,Q)*Constpriorprob(p,k2);
+        
     }
     else{
         Q=1.0;
@@ -278,7 +279,8 @@ void GibbsgConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], in
 		my_gsl_vector_fprintf(fAllModels, index, "%f");
 		//and the BF's
 		fprintf(fAllBF, "%.20f\n", oldPBF/Constpriorprob(p,k2)); 
-		
+        //Rprintf("BayesFactor is %d \n", oldPBF);
+        //Rprintf("Q is %d \n", Q);
 	}
 	
 	//normalize:
@@ -1204,6 +1206,7 @@ void GibbsRobustConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[
     
 	double HPMBF=oldPBF;
 	double ratio=0.0;
+    double BF=0.0;
 	
 	//Burnin
 	//Interpret old as current and new as proposal
@@ -1249,6 +1252,8 @@ void GibbsRobustConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[
             if (k2>0){
                 Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
                 k2e=k2+knull;
+                BF=RobustBF21fun(n,k2e,knull,Q);
+                //Rprintf("with %d,covariates,vs %d covariates,  %d, data, and %.20f the BayesFactor is %.20f \n", k2e,knull,n, Q, BF);
                 newPBF= RobustBF21fun(n,k2e,knull,Q)*Constpriorprob(p,k2);
             }
             else{
@@ -1289,7 +1294,8 @@ void GibbsRobustConst (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[
 		my_gsl_vector_fprintf(fAllModels, index, "%f");
 		//and the BF's
 		fprintf(fAllBF, "%.20f\n", oldPBF/Constpriorprob(p,k2)); 
-		
+      
+
 	}
 	
 	//normalize:
@@ -1541,6 +1547,8 @@ void GibbsRobustSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], 
     
 	double HPMBF=oldPBF;
 	double ratio=0.0;
+    double BF=0.0;
+    double SB=0.0;
 	
 	//Burnin
 	//Interpret old as current and new as proposal
@@ -1553,6 +1561,10 @@ void GibbsRobustSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], 
             if (k2>0){
                 Q=Gibbsstatistics(p, n, SSEnull, X, y, index, &k2, hatbetap);
                 k2e=k2+knull;
+                BF=RobustBF21fun(n,k2e,knull,Q);
+                SB=SBpriorprob(p,k2);
+                //Rprintf("with %d,covariates,vs %d covariates,  %d, data, and %.20f the BayesFactor is %.20f \n", k2e,knull,n, Q, BF);
+
                 newPBF= RobustBF21fun(n,k2e,knull,Q)*SBpriorprob(p,k2);
             }
             else{
@@ -1625,8 +1637,10 @@ void GibbsRobustSB (char *pI[], int *pn, int *pp, int *pSAVE, char *homePath[], 
 		//Write to the file the visited model
 		my_gsl_vector_fprintf(fAllModels, index, "%f");
 		//and the BF's
-		fprintf(fAllBF, "%.20f\n", oldPBF/SBpriorprob(p,k2)); 
-		
+		fprintf(fAllBF, "%.10f\n", oldPBF/SBpriorprob(p,k2));
+        //Rprintf("BayesFactor is %.20f \n", oldPBF);
+        //Rprintf("Q is %.10f \n", Q);
+
 	}
 	
 	//normalize:

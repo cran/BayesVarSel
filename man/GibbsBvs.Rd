@@ -10,8 +10,8 @@ to explore the model space and frequency of "visits" to construct the estimates.
 }
 \usage{
 GibbsBvs(formula, fixed.cov = c("Intercept"), data, prior.betas = "Robust",
-         prior.models = "Constant", n.iter=1000, init.model = "Full",
-         n.burnin = 50, n.thin=1, 
+         prior.models = "ScottBerger", n.iter=10000, init.model = "Full",
+         n.burnin = 500, n.thin=1, 
          time.test = TRUE, priorprobs=NULL, seed = runif(1,0,16091956))
 }
 %- maybe also 'usage' for other objects documented here.
@@ -65,7 +65,9 @@ Gonzalo Garcia-Donato and Anabel Forte
 
 \keyword{ package }
 \seealso{
-\code{\link[BayesVarSel]{plotBvs}} for a plot of the object created.
+\code{\link[BayesVarSel]{plotBvs}} for several plots of the result, \code{\link[BayesVarSel]{BMAcoeff}} for obtaining model averaged simulations of regression coefficients and \code{\link[BayesVarSel]{predictBvs}} for predictions.
+
+\code{\link[BayesVarSel]{Bvs}} and \code{\link[BayesVarSel]{PBvs}} for exact versions obtained enumerating all entertained models (recommended when p<20).
 }
 
 

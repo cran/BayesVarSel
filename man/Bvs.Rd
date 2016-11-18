@@ -13,7 +13,7 @@ Exact computation of summaries of the posterior distribution using sequential co
 }
 \usage{
 Bvs(formula, fixed.cov=c("Intercept"), data, prior.betas = "Robust", 
-    prior.models = "Constant", n.keep = 10, time.test = TRUE, priorprobs=NULL)
+    prior.models = "ScottBerger", n.keep = 10, time.test = TRUE, priorprobs=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -35,7 +35,7 @@ where Bi is the Bayes factor of Mi to M0, Pr(Mi) is the prior probability of Mi 
 
 The Bayes factor B_i depends on the prior assigned for the regression parameters in Mi and \code{Bvs} implements a number of popular choices plus the "Robust" prior recently proposed by Bayarri et al (2012). The "Robust" prior is the default choice for both theoretical (see the reference for details) and computational reasons since it produces Bayes factors with closed-form expressions. The "gZellner" prior implemented corresponds to the prior in Zellner (1986) with g=n while the "Liangetal" prior is the hyper-g/n with a=3 (see the original paper Liang et al 2008, for details). "ZellnerSiow" is the multivariate Cauchy prior proposed by Zellner and Siow (1980, 1984), further studied by Bayarri and Garcia-Donato (2007). Finally, "FLS" is the prior recommended by Fernandez, Ley and Steel (2001) which is the prior in Zellner (1986) with g=max(n, p*p) p being the number of covariates to choose from (the most complex model has p+number of fixed covariates).
 
-With respect to the prior over the model space Pr(Mi) three possibilities are implemented: "Constant", under which every model has the same prior probability, "ScottBerger" under which Pr(Mi) is inversely proportional to the number of models of that dimension, and "User" (see below). The "ScottBerger" prior was studied by Scott and Berger (2010) and controls for multiplicity.
+With respect to the prior over the model space Pr(Mi) three possibilities are implemented: "Constant", under which every model has the same prior probability, "ScottBerger" under which Pr(Mi) is inversely proportional to the number of models of that dimension, and "User" (see below). The "ScottBerger" prior was studied by Scott and Berger (2010) and controls for multiplicity (default choice since version 1.7.0).
 
 When the parameter \code{prior.models}="User", the prior probabilities are defined through the p+1 dimensional parameter vector \code{priorprobs}. Let k be the number of explanatory variables in the simplest model (the one defined by \code{fixed.cov}) then except for the normalizing constant, the first component of \code{priorprobs} must contain the probability of each model with k covariates (there is only one); the second component of \code{priorprobs} should contain the probability of each model with k+1 covariates and so on. Finally, the p+1 component in \code{priorprobs} defined the probability of the most complex model (that defined by \code{formula}. That is
 
@@ -98,7 +98,7 @@ Chicago Press.
 
 \keyword{ package }
 \seealso{
-\code{\link[BayesVarSel]{plotBvs}} for several plots of the result.
+\code{\link[BayesVarSel]{plotBvs}} for several plots of the result, \code{\link[BayesVarSel]{BMAcoeff}} for obtaining model averaged simulations of regression coefficients and \code{\link[BayesVarSel]{predictBvs}} for predictions.
 
 \code{\link[BayesVarSel]{PBvs}} for a parallelized version of \code{Bvs}.
 

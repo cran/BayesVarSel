@@ -1,5 +1,5 @@
  PBvs <-
-function(formula, fixed.cov=c("Intercept"), data, prior.betas="Robust", prior.models="Constant", n.keep=10, n.nodes=2, priorprobs=NULL,time.test=TRUE){
+function(formula, fixed.cov=c("Intercept"), data, prior.betas="Robust", prior.models="ScottBerger", n.keep=10, n.nodes=2, priorprobs=NULL,time.test=TRUE){
 
 #require(parallel)#package for parallel computation
 

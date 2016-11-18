@@ -1,4 +1,4 @@
-Bvs <- function(formula,  fixed.cov=c("Intercept"), data, prior.betas="Robust", prior.models="Constant", n.keep=10, time.test=TRUE, priorprobs=NULL){
+Bvs <- function(formula,  fixed.cov=c("Intercept"), data, prior.betas="Robust", prior.models="ScottBerger", n.keep=10, time.test=TRUE, priorprobs=NULL){
   
   #Let's define the result 
   result<- list()
@@ -8,15 +8,14 @@ Bvs <- function(formula,  fixed.cov=c("Intercept"), data, prior.betas="Robust", 
   #remove all the previous documents in the working directory
   unlink(paste(wd,"*",sep="/"))
   
-
+  #eval the full model 
+    
+  
 #Set the design matrix if fixed covariates present: 
 if(!is.null(fixed.cov)){
- 
-  #Eval the full model 
-  lmfull = lm(formula, data=data, y=TRUE, x=TRUE)
+  lmfull = lm(formula, data, y=TRUE, x=TRUE)
   X.full<- lmfull$x
   namesx<- dimnames(X.full)[[2]]
-  
   
   #remove the brackets in "(Intercept)" if present. 
   if(namesx[1]=="(Intercept)"){
@@ -88,8 +87,7 @@ if(!is.null(fixed.cov)){
     stop(paste("object '",ausent,"' not found in the full model\n",sep=""))
   }
 
-
- 
+  
 
 #There is any variable to select from?
   if(length(namesx)==length(namesnull)){
@@ -145,6 +143,7 @@ if(is.null(fixed.cov)){
   lmfull = lm(formula, data, y=TRUE, x=TRUE)
   X.full<- lmfull$x
   namesx<- dimnames(X.full)[[2]]
+  
    #remove the brackets in "(Intercept)" if present. 
   if(namesx[1]=="(Intercept)"){
     namesx[1]<- "Intercept" #namesx contains the name of variables including the intercept

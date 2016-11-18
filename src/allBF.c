@@ -109,7 +109,7 @@ double robint (double a,double b, double c,double z){
 	F.params = &params;
 	
 	/*integramos y guardamos el resultado en result y el error en error*/
-	gsl_integration_qags(&F, 0,1, 0, 1e-9,10000,w,&result,&error);
+	gsl_integration_qags(&F, 0.0,1.0, 0, 1e-9,10000,w,&result,&error);
 	
 	
 	/*Liberamos el espacio de trabajo*/
@@ -124,13 +124,13 @@ double robint (double a,double b, double c,double z){
 
 double RobustBF21fun(int n, int k2, int k0, double Q)
 {
-
+//k2, total number of covariates in the model 
 	double  T1=0.0, T2=0.0, T3=0.0;
 	double arg=0.0;
 	double R1=0.0;
 	double z=0.0;
 	double rho=0.0;
-  rho=pow(k2,-1.0);
+  rho=pow((k2),-1.0);
   
   double k2aux=0.0;
   k2aux=k2-k0+1.0;//equivalently k2aux=ki+1
@@ -139,10 +139,14 @@ double RobustBF21fun(int n, int k2, int k0, double Q)
   Qaux=pow(Q,-1.0);
 	
 	// Qaux means Q_0i
-	T1=pow(Qaux,(n-k0)/2.0);
-	T2=pow(rho*(n+1),-((k2-k0))/2.0)/k2aux;
-	//for the hypergeometric factor we disdtinguish whether the argument is
-	//<-1 or not
+	T1=log(Qaux)*((n-k0)/2.0);
+	//T1=pow(Qaux,(n-k0)/2.0);
+	T2=log(rho*(n+1))*(-((k2-k0))/2.0)-log(k2aux);
+	//T2=pow(rho*(n+1),-((k2-k0)/2.0))*pow(k2aux,-1.0);
+	
+	
+	//for the hypergeometric factor we distinguish whether the argument is
+	//>1 or not
 	
 	
 	arg=(1.0-Qaux)/(rho*(1.0+n));
@@ -150,26 +154,38 @@ double RobustBF21fun(int n, int k2, int k0, double Q)
 	int STATUS=0;
 	
 	
-	if (arg>=-1.0)
-	{
-		T3=gsl_sf_hyperg_2F1(k2aux/2.0, (n-k0)/2.0, (k2aux/2.0)+1.0, arg);
-	}
-	else 
-	{
+	//if (arg>=-1.0)
+	//{
+       //STATUS=gsl_sf_hyperg_2F1_e(k2aux/2.0, (n-k0)/2.0, (k2aux/2.0)+1.0, arg,&result);
+       //if(STATUS==0){
+         //T3=log(result.val);
+         //T3=result.val;
+       //}else{
+              //T3= log(robint((n-k0)/2.0,k2aux/2.0, (k2aux/2.0)+1.0, arg));
+              //T3=robint((n-k0)/2.0,k2aux/2.0, (k2aux/2.0)+1.0, arg);
+              //}
+       //Rprintf("arg=%.20f,T3=%.20f \n",arg,T3);
+	//}else {
+		
 		z=arg/(arg-1.0);
-		STATUS=gsl_sf_hyperg_2F1_e((n-k0)/2.0, 1.0, (k2aux/2.0)+1.0, z,&result);
-		
-		
-		if (STATUS==0) T3=pow((1.0-arg),(k0-n)/2.0)*result.val; //succed
+		STATUS=gsl_sf_hyperg_2F1_e(1,(n-k0)/2.0, (k2aux/2.0)+1.0, z,&result);
+		  if (STATUS==0){ 
+		      T3=((k0-n)/2)*log(1.0-arg)+log(result.val);
+		      //T3=pow((1.0-arg),(k0-n)/2)*result.val;
+          //Rprintf("arg=%.20f,T3=%.20f \n",arg,T3);
+        }//succed
 		else //gsl_hyper failed, then numerical approx of the log(2F1)
 		{
-							
-			T3=pow((1.0-arg),(k0-n)/2.0)*robint((n-k0)/2.0,1.0, (k2aux/2.0)+1.0, z);
-					}
-	}
+		  T3=((k0-n)/2)*log(1.0-arg)+log(robint((n-k0)/2.0,1.0, (k2aux/2.0)+1.0, z));
+		  //T3=pow((1.0-arg),(k0-n)/2)*robint((n-k0)/2.0,1.0, (k2aux/2.0)+1.0, z);
+           //Rprintf("arg=%.20f,T3=%.20f \n",arg,T3);
+        }
+	//}
 	
 	
-	R1=T1*T2*T3;
+	R1=exp(T1+T2+T3);
+	//R1=T1*T2*T3;
+	
     if (!R_FINITE(R1)){error("A Bayes factor is infinite.");}
 	
 	return(R1);

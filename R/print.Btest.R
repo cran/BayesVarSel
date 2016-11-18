@@ -1,4 +1,4 @@
-print.BayesFactor <- function(x, ...){
+print.Btest <- function(x, ...){
 	cat("---------\n")
 	cat("Models:\n")
 	print(x$models)

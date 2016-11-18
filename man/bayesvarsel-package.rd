@@ -16,8 +16,8 @@ The interaction with the package is through a friendly interface that syntactica
 \tabular{ll}{
 Package: \tab BayesVarSel\cr
 Type: \tab Package\cr
-Version: \tab 1.6.2\cr
-Date: \tab 2015-10-31\cr
+Version: \tab 1.7.0\cr
+Date: \tab 2016-08-31\cr
 License: \tab GPL-2\cr
 }
 }
@@ -46,10 +46,12 @@ Limited.
 }
 \keyword{ package }
 \seealso{
-\code{\link[BayesVarSel]{BayesFactor}},
+\code{\link[BayesVarSel]{Btest}},
 \code{\link[BayesVarSel]{Bvs}},
 \code{\link[BayesVarSel]{PBvs}},
-\code{\link[BayesVarSel]{GibbsBvs}}
+\code{\link[BayesVarSel]{GibbsBvs}},
+\code{\link[BayesVarSel]{BMAcoeff}},
+\code{\link[BayesVarSel]{predictBvs}}
 }
 \examples{
 demo(BayesVarSel.Hald)
