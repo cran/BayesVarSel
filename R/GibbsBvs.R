@@ -3,6 +3,8 @@ function(formula,fixed.cov=c("Intercept"), data,  prior.betas="Robust", prior.mo
         n.burnin=500, n.thin=1, time.test=TRUE, priorprobs=NULL, seed=runif(1,0,16091956)){
 
 
+	formula<- as.formula(formula)
+
   #Let's define the result 
   result<- list()
   
@@ -27,7 +29,9 @@ function(formula,fixed.cov=c("Intercept"), data,  prior.betas="Robust", prior.mo
     }
     
     #Eval of the null model
-    response <- strsplit(formula,"~")[[1]][1]
+    #response <- strsplit(formula,"~")[[1]][1]
+    response<- formula[[2]]
+		
     
     if(length(fixed.cov)==1){
       if("Intercept"%in% fixed.cov){

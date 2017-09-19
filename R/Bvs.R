@@ -1,4 +1,6 @@
 Bvs <- function(formula,  fixed.cov=c("Intercept"), data, prior.betas="Robust", prior.models="ScottBerger", n.keep=10, time.test=TRUE, priorprobs=NULL){
+
+  formula<- as.formula(formula)
   
   #Let's define the result 
   result<- list()
@@ -23,7 +25,9 @@ if(!is.null(fixed.cov)){
   }
   
   #Eval of the null model
-   response <- strsplit(formula,"~")[[1]][1]
+   #response <- strsplit(formula,"~")[[1]][1]
+   response<- formula[[2]]
+	 
  
   if(length(fixed.cov)==1){
     if("Intercept"%in% fixed.cov){

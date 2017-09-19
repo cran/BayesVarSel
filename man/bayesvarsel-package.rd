@@ -16,8 +16,8 @@ The interaction with the package is through a friendly interface that syntactica
 \tabular{ll}{
 Package: \tab BayesVarSel\cr
 Type: \tab Package\cr
-Version: \tab 1.7.0\cr
-Date: \tab 2016-08-31\cr
+Version: \tab 1.7.1\cr
+Date: \tab 2017-09-19\cr
 License: \tab GPL-2\cr
 }
 }

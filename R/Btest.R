@@ -11,12 +11,7 @@ Btest<- function(models, data, prior.betas="Robust", prior.models="Constant", pr
 	#check if the selected option exists
 	if (pfb!="g" && pfb!="r" && pfb!="z" && pfb!="l" && pfb!="f") stop("I am very sorry: prior for betas no valid\n")
 
-	#The .C to be used:
-	if (pfb=="g") method<- "gBF"
-	if (pfb=="r") method<- "RobustBF"
-	if (pfb=="z") method<- "ZSBF"
-	if (pfb=="l") method<- "LiangBF"
-	if (pfb=="f") method<- "flsBF"
+	
 		
 
 	#prior for model space:
@@ -51,7 +46,12 @@ Btest<- function(models, data, prior.betas="Robust", prior.models="Constant", pr
 		#check if the "null" model is nested in all the others
 		if (!relax.nest & sum(covar.list[[nullmodel]]%in%covar.list[[i]])<Dim[nullmodel]){stop("Unable to determine a simpler model using names\n")}
 		Qi0<- SSE[i]/SSE[nullmodel]
-		BFi0[i]<- .C(method, as.integer(n), as.integer(Dim[i]), as.integer(Dim[nullmodel]), as.double(Qi0), as.double(0.0))[5][[1]]		
+		#The .C to be used:
+		if (pfb=="g") BFi0[i]<- .C("gBF", as.integer(n), as.integer(Dim[i]), as.integer(Dim[nullmodel]), as.double(Qi0), as.double(0.0))[5][[1]]	 
+		if (pfb=="r") BFi0[i]<- .C("RobustBF", as.integer(n), as.integer(Dim[i]), as.integer(Dim[nullmodel]), as.double(Qi0), as.double(0.0))[5][[1]]	 
+		if (pfb=="z")  BFi0[i]<- .C("ZSBF", as.integer(n), as.integer(Dim[i]), as.integer(Dim[nullmodel]), as.double(Qi0), as.double(0.0))[5][[1]]
+		if (pfb=="l") BFi0[i]<- .C("LiangBF", as.integer(n), as.integer(Dim[i]), as.integer(Dim[nullmodel]), as.double(Qi0), as.double(0.0))[5][[1]]
+			
 	 }
     }
 	
@@ -61,7 +61,7 @@ Btest<- function(models, data, prior.betas="Robust", prior.models="Constant", pr
 		#check if the "null" model is nested in all the others
 		if (!relax.nest & sum(covar.list[[nullmodel]]%in%covar.list[[i]])<Dim[nullmodel]){stop("There is no a model nested in all the others\n")}
 		Qi0<- SSE[i]/SSE[nullmodel]
-		BFi0[i]<- .C(method, as.integer(p), as.integer(n), as.integer(Dim[i]), as.integer(Dim[nullmodel]), as.double(Qi0), as.double(0.0))[6][[1]]		
+		BFi0[i]<- .C("flsBF", as.integer(p), as.integer(n), as.integer(Dim[i]), as.integer(Dim[nullmodel]), as.double(Qi0), as.double(0.0))[6][[1]]		
 	 }
     }
 	

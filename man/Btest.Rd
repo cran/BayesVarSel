@@ -83,11 +83,11 @@ Limited.
 #load data
 data(UScrime)
 #Model selection among the following models: (note model1 is nested in all the others)
-model1<- as.formula("y~1+Prob")
-model2<- as.formula("y~1+Prob+Time")
-model3<- as.formula("y~1+Prob+Po1+Po2")
-model4<- as.formula("y~1+Prob+So")
-model5<- as.formula("y~.")
+model1<- y ~ 1 + Prob
+model2<- y ~ 1 + Prob + Time
+model3<- y ~ 1 + Prob + Po1 + Po2
+model4<- y ~ 1 + Prob + So
+model5<- y ~ .
 
 #Equal prior probabilities for models:
 crime.BF<- Btest(models=list(basemodel=model1, 

@@ -89,8 +89,8 @@ data(UScrime)
 #Here we keep the 1000 most probable models a posteriori:
 #The computation over the model space is distributed over two
 #cores:
-crime.Bvs<- PBvs(formula="y~.", data=UScrime, n.keep=1000, 
-n.nodes=2)
+crime.Bvs<- PBvs(formula= y ~ . , data = UScrime, n.keep = 1000, 
+n.nodes = 2)
 
 #A look at the results:
 crime.Bvs
@@ -99,7 +99,8 @@ summary(crime.Bvs)
 
 #An image plot with the joint inlcusion 
 #probabilities:
-plotBvs(crime.Bvs, option="joint")}
+plotBvs(crime.Bvs, option="joint")
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

@@ -1,12 +1,12 @@
 # Tell R to load the shared object <BayesVarSel.so>.
-useDynLib("BayesVarSel")
+useDynLib("BayesVarSel", .registration=TRUE)
 
 import(parallel, MASS, mvtnorm)
 
-importFrom("grDevices", "gray.colors","gray")
-importFrom("graphics", "axis", "barplot", "image", "layout", "par","plot", "hist", "text")
-importFrom("stats", "as.formula", "lm", "rbinom","runif","density", "quantile")
-importFrom("utils", "read.table", "write.table")
+importFrom(grDevices, gray.colors,gray)
+importFrom(graphics, axis, barplot, image, layout, par,plot, hist, text)
+importFrom(stats, as.formula, lm, rbinom,runif,density, quantile)
+importFrom(utils, read.table, write.table)
 
 
 # Define which functions people can see.

@@ -2,6 +2,7 @@
 function(formula, fixed.cov=c("Intercept"), data, prior.betas="Robust", prior.models="ScottBerger", n.keep=10, n.nodes=2, priorprobs=NULL,time.test=TRUE){
 
 #require(parallel)#package for parallel computation
+formula<- as.formula(formula)
 
 cl <- makeCluster(n.nodes) 
 
@@ -37,7 +38,9 @@ if(!is.null(fixed.cov)){
   }
   
   #Eval of the null model
-  response <- strsplit(formula,"~")[[1]][1]
+  #response <- strsplit(formula,"~")[[1]][1]
+  response<- formula[[2]]
+	
   
   if(length(fixed.cov)==1){
     if("Intercept"%in% fixed.cov){
