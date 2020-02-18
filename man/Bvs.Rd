@@ -4,10 +4,18 @@
 \alias{Bvs}
 \title{Bayesian Variable Selection for linear regression models}
 \usage{
-Bvs(formula, data, null.model = paste(as.formula(formula)[[2]], " ~ 1", sep =
-  ""), prior.betas = "Robust", prior.models = "ScottBerger", n.keep = 10,
-  time.test = TRUE, priorprobs = NULL, parallel = FALSE,
-  n.nodes = detectCores())
+Bvs(
+  formula,
+  data,
+  null.model = paste(as.formula(formula)[[2]], " ~ 1", sep = ""),
+  prior.betas = "Robust",
+  prior.models = "ScottBerger",
+  n.keep = 10,
+  time.test = TRUE,
+  priorprobs = NULL,
+  parallel = FALSE,
+  n.nodes = detectCores()
+)
 }
 \arguments{
 \item{formula}{Formula defining the most complex (full) regression model in the
@@ -57,11 +65,13 @@ to select from} \item{k }{Number of fixed variables} \item{HPMbin }{The
 binary expression of the Highest Posterior Probability model}
 \item{modelsprob }{A \code{data.frame} which summaries the \code{n.keep}
 most probable, a posteriori models, and their associated probability.}
-\item{inclprob }{A \code{data.frame} with the inclusion probabilities of all
+\item{inclprob }{A named vector with the inclusion probabilities of all
 the variables.} \item{jointinclprob }{A \code{data.frame} with the joint
 inclusion probabilities of all the variables.} \item{postprobdim }{Posterior
 probabilities of the dimension of the true model} \item{call }{The
-\code{call} to the function} \item{method }{\code{full} or \code{parallel} in case of
+\code{call} to the function} 
+\item{C}{The value of the normalizing constant (C=sum BiPr(Mi), for Mi in the model space)}
+\item{method }{\code{full} or \code{parallel} in case of
 parallel computation}
 }
 \description{
@@ -114,10 +124,10 @@ covariates and so on. Finally, the p+1 component in \code{priorprobs}
 defined the probability of the most complex model (that defined by
 \code{formula}. That is
 
-\code{priorprobs}[j]=C*Pr(M_i such that M_i has j-1+k explanatory variables)
+\code{priorprobs}[j]=Cprior*Pr(M_i such that M_i has j-1+k explanatory variables)
 
-where C is the normalizing constant, i.e
-\code{C=1/sum(priorprobs*choose(p,0:p)}.
+where Cprior is the normalizing constant for the prior, i.e
+\code{Cprior=1/sum(priorprobs*choose(p,0:p)}.
 
 Note that \code{prior.models}="Constant" is equivalent to the combination
 \code{prior.models}="User" and \code{priorprobs=rep(1,(p+1))} but the
@@ -128,6 +138,11 @@ Similarly, \code{prior.models} = "ScottBerger" is equivalent to the
 combination \code{prior.models}= "User" and \code{priorprobs} =
 \code{1/choose(p,0:p)}.
 
+The case where n<p is handled assigning to the Bayes factors of models with k regressors
+with n<k a value of 1. This should be interpreted as a generalization of the
+null predictive matching in Bayarri et al (2012). Use \code{\link[BayesVarSel]{GibbsBvs}} for cases where
+p>>.
+
 Limitations: the error "A Bayes factor is infinite.". Bayes factors can be
 extremely big numbers if i) the sample size is even moderately large or if
 ii) a model is much better (in terms of fit) than the model taken as the
@@ -135,7 +150,7 @@ null model. We are currently working on more robust implementations of the
 functions to handle these problems. In the meanwhile you could try using the
 g-Zellner prior (which is the most simple one and results, in these cases,
 should not vary much with the prior) and/or using more accurate definitions
-of the simplest model (via the \code{fixed.cov} argument).
+of the simplest model (via the \code{null.model} argument).
 }
 \examples{
 
@@ -199,6 +214,10 @@ Inference and Decision techniques: Essays in Honor of Bruno de Finetti (A.
 Zellner, ed.) 389-399. Edward Elgar Publishing Limited.
 }
 \seealso{
+Use \code{\link[BayesVarSel]{print.Bvs}} for the best visited models and an 
+estimation of their posterior probabilities and  \code{\link[BayesVarSel]{summary.Bvs}} for
+summaries of the posterior distribution.
+
 \code{\link[BayesVarSel]{plot.Bvs}} for several plots of the result,
 \code{\link[BayesVarSel]{BMAcoeff}} for obtaining model averaged simulations
 of regression coefficients and \code{\link[BayesVarSel]{predict.Bvs}} for
@@ -206,6 +225,8 @@ predictions.
 
 \code{\link[BayesVarSel]{GibbsBvs}} for a heuristic approximation based on
 Gibbs sampling (recommended when p>20, no other possibilities when p>31).
+
+See \code{\link[BayesVarSel]{GibbsBvsF}} if there are factors among the explanatory variables
 }
 \author{
 Gonzalo Garcia-Donato and Anabel Forte

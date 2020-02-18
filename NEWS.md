@@ -1,3 +1,28 @@
+
+# BayesVarSel 2.0.1
+* Minor updates in order to pass CRAN checks.
+
+# BayesVarSel 2.0.0
+
+* Added new functionalities to handle the situation with p>n and p>>n
+
+* Added a new function to handle variable selection with factors that is independent on the parameterization (contrast) used to parameterize factors and that is able to control for multiplicity.
+
+* Corrected a numerical error in the computation of Robust Bayes factors.
+
+# BayesVarSel 1.9.0
+
+* Added en estimation of posterior probabilities of models based on the normalizing constant. 
+(it goes with the print function)
+
+# BayesVarSel 1.8.2
+
+* Added a vignette based on the R Journal article https://journal.r-project.org/archive/2018/RJ-2018-021/index.html.
+
+# BayesVarSel 1.8.1
+
+* Added the calculation of the normalizing constant.
+
 # BayesVarSel 1.8.0
 
 * Merged Bvs and PBvs in just one function (called Bvs and old PBvs disappears). Bvs now has two extra parameters to control parallelization: parallel and n.nodes.

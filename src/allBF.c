@@ -17,6 +17,8 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sf_gamma.h>
 #include <gsl/gsl_errno.h>
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_cdf.h>
 
 
 // Gonzalo Garcia-Donato and Anabel Forte, 2010
@@ -25,6 +27,11 @@
 //and the complex model contains k2 parameters
 
 
+//Unitary Bayes factor::
+double unitBF21fun(int n, int k2, int k0, double Q)
+{
+	return(1.0);
+}
 
 /* -----g-prior-------*/
 
@@ -33,10 +40,11 @@
 
 double gBF21fun(int n, int k2, int k0, double Q)
 {
-	
+
+		if (k2>=n) return 1.0;
 		double BF21=0.0;
-        BF21 = exp(((n-k2)/2.0)*log(1.0+n)-((n-k0)/2.0)*log(1.0+n*Q));
-        if (!R_FINITE(BF21)){error("A Bayes factor is infinite.");}
+    BF21 = exp(((n-k2)/2.0)*log(1.0+n)-((n-k0)/2.0)*log(1.0+n*Q));
+    if (!R_FINITE(BF21)){error("A Bayes factor is infinite.");}
 		return BF21;
 	
 }
@@ -49,6 +57,7 @@ double gBF21fun(int n, int k2, int k0, double Q)
 double flsBF21fun(int p, int n, int k2, int k0, double Q)
 {
     
+  	if (k2>=n) return 1.0;
     int g=GSL_MAX(n, p*p);
     double BF21=0.0;
     if (!R_FINITE(BF21)){error("A Bayes factor is infinite.");}
@@ -125,6 +134,9 @@ double robint (double a,double b, double c,double z){
 double RobustBF21fun(int n, int k2, int k0, double Q)
 {
 //k2, total number of covariates in the model 
+	
+	if (k2>=n) return 1.0;		
+
 	double  T1=0.0, T2=0.0, T3=0.0;
 	double arg=0.0;
 	double R1=0.0;
@@ -141,7 +153,7 @@ double RobustBF21fun(int n, int k2, int k0, double Q)
 	// Qaux means Q_0i
 	T1=log(Qaux)*((n-k0)/2.0);
 	//T1=pow(Qaux,(n-k0)/2.0);
-	T2=log(rho*(n+1))*(-((k2-k0))/2.0)-log(k2aux);
+	T2=log(rho*(n+1.0))*(-((k2-k0))/2.0)-log(k2aux);
 	//T2=pow(rho*(n+1),-((k2-k0)/2.0))*pow(k2aux,-1.0);
 	
 	
@@ -170,13 +182,13 @@ double RobustBF21fun(int n, int k2, int k0, double Q)
 		z=arg/(arg-1.0);
 		STATUS=gsl_sf_hyperg_2F1_e(1,(n-k0)/2.0, (k2aux/2.0)+1.0, z,&result);
 		  if (STATUS==0){ 
-		      T3=((k0-n)/2)*log(1.0-arg)+log(result.val);
+		      T3=((k0-n)/2.0)*log(1.0-arg)+log(result.val);
 		      //T3=pow((1.0-arg),(k0-n)/2)*result.val;
           //Rprintf("arg=%.20f,T3=%.20f \n",arg,T3);
         }//succed
 		else //gsl_hyper failed, then numerical approx of the log(2F1)
 		{
-		  T3=((k0-n)/2)*log(1.0-arg)+log(robint((n-k0)/2.0,1.0, (k2aux/2.0)+1.0, z));
+		  T3=((k0-n)/2.0)*log(1.0-arg)+log(robint((n-k0)/2.0,1.0, (k2aux/2.0)+1.0, z));
 		  //T3=pow((1.0-arg),(k0-n)/2)*robint((n-k0)/2.0,1.0, (k2aux/2.0)+1.0, z);
            //Rprintf("arg=%.20f,T3=%.20f \n",arg,T3);
         }
@@ -187,6 +199,30 @@ double RobustBF21fun(int n, int k2, int k0, double Q)
 	//R1=T1*T2*T3;
 	
     if (!R_FINITE(R1)){error("A Bayes factor is infinite.");}
+	
+	return(R1);
+}
+
+/* Robust Bayes Factor of type 2 for main.c*/
+
+double Robust2BF21fun(int n, int k2, int k0, double Q)
+{
+//k2, total number of covariates in the model 
+	
+	if (k2>=n) return 1.0;	
+
+	double T1=0.0, T2=0.0, T3=0.0;
+	double R1=0.0, L=0.0, R2hat=0.0;
+	
+	L = (1.0+n)/k2-1.0;
+	R2hat = (1.0-Q)/(1+L*Q);
+ 	T1=((n-k2)/2.0)*log((1.0+n)/k2);
+	T2=-((n-k0)/2.0)*log(1.0+L*Q)-log(2.0)-log(1.0-R2hat)-log(R2hat);
+	T3=gsl_cdf_beta_P(R2hat, k2/2.0, (n-k2-1.0)/2.0)/gsl_ran_beta_pdf(R2hat, k2/2.0, (n-k2-1.0)/2.0);
+		
+	R1=exp(T1+T2)*T3;
+	
+  if (!R_FINITE(R1)){error("A Bayes factor is infinite.");}
 	
 	return(R1);
 }
@@ -242,6 +278,8 @@ double liang (double n, double k, double k0, double Q){
 /* Liang Bayes Factor for main.c*/
 double LiangBF21fun(int n, int k2, int k0, double Q)
 {
+	
+	  if (k2>=n) return 1.0;
     double LiangBF21=0.0;
     LiangBF21 = liang((double) n, (double) k2, (double) k0, Q);
     if (!R_FINITE(LiangBF21)){error("A Bayes factor is infinite.");}
@@ -302,6 +340,7 @@ double zell (double n,double k, double k0, double Q){
 /* FUNCION QUE USAREMOS EN EL main.c*/
 double ZSBF21fun(int n, int k2, int k0, double Q)
 {
+  	if (k2>=n) return 1.0;	
     double ZSBF21=0.0;
     ZSBF21 = zell ((double) n,(double) k2, (double) k0, Q);
     if (!R_FINITE(ZSBF21)){error("A Bayes factor is infinite.");}

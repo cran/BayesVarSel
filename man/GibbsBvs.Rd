@@ -5,10 +5,20 @@
 \title{Bayesian Variable Selection for linear regression models using Gibbs
 sampling.}
 \usage{
-GibbsBvs(formula, data, null.model = paste(as.formula(formula)[[2]], " ~ 1",
-  sep = ""), prior.betas = "Robust", prior.models = "ScottBerger",
-  n.iter = 10000, init.model = "Full", n.burnin = 500, n.thin = 1,
-  time.test = TRUE, priorprobs = NULL, seed = runif(1, 0, 16091956))
+GibbsBvs(
+  formula,
+  data,
+  null.model = paste(as.formula(formula)[[2]], " ~ 1", sep = ""),
+  prior.betas = "Robust",
+  prior.models = "ScottBerger",
+  n.iter = 10000,
+  init.model = "Full",
+  n.burnin = 500,
+  n.thin = 1,
+  time.test = TRUE,
+  priorprobs = NULL,
+  seed = runif(1, 0, 16091956)
+)
 }
 \arguments{
 \item{formula}{Formula defining the most complex regression model in the
@@ -34,7 +44,9 @@ process.}
 include "Null" (the model only with the covariates specified in
 \code{fixed.cov}), "Full" (the model defined by \code{formula}), "Random" (a
 randomly selected model) and a vector with p (the number of covariates to
-select from) zeros and ones defining a model.}
+select from) zeros and ones defining a model. When p>n the function forces
+the init.model to be "Null" (it would not make sense to start in a singular model plus
+you expect here a sparse true model).}
 
 \item{n.burnin}{Length of burn in, i.e. number of iterations to discard at
 the beginning.}
@@ -64,16 +76,17 @@ model defined by \code{formula} is fitted by \code{lm}} \item{lmnull }{The
 the potential explanatory variables} \item{n }{Number of observations}
 \item{p }{Number of explanatory variables to select from} \item{k }{Number
 of fixed variables} \item{HPMbin }{The binary expression of the most
-probable model found.} \item{inclprob }{A \code{data.frame} with the
+probable model found.} \item{inclprob }{A named vector with the
 estimates of the inclusion probabilities of all the variables.}
 \item{jointinclprob }{A \code{data.frame} with the estimates of the joint
 inclusion probabilities of all the variables.} \item{postprobdim }{Estimates
 of posterior probabilities of the dimension of the true model.}
 \item{modelslogBF}{A matrix with both the binary representation of the
 visited models after the burning period and the Bayes factor (log scale) of
-that model to the null model.}\item{priorprobs}{A p+1 dimensional vector containing values proportionals
-to the prior probability of a model of each dimension (from 0 to p)} \item{call }{The \code{call} to the
-function.} \item{method }{\code{gibbs}}
+that model to the null model.}\item{priorprobs}{If \code{prior.models}="User" then this vector is stored here. Else, the #' type of prior as defined in \code{prior.models}}\item{call }{The \code{call} to the
+function.}
+\item{C}{An estimation of the normalizing constant (C=sum Bi Pr(Mi), for Mi in the model space) using the method in George and McCulloch (1997).}
+\item{method }{\code{gibbs}}
 }
 \description{
 Approximate computation of summaries of the posterior distribution using a
@@ -137,9 +150,15 @@ selection. Statistica Sinica, 7, 339:372.
 \code{\link[BayesVarSel]{plot.Bvs}} for several plots of the result,
 \code{\link[BayesVarSel]{BMAcoeff}} for obtaining model averaged simulations
 of regression coefficients and \code{\link[BayesVarSel]{predict.Bvs}} for
-predictions.
+predictions. 
 
-\code{\link[BayesVarSel]{Bvs}} for exact
+See \code{\link[BayesVarSel]{GibbsBvsF}} if there are factors among the explanatory variables.
+
+See \code{\link[BayesVarSel]{pltltn}} for corrections on estimations for the
+situation where p>>n. See the help in  \code{\link[BayesVarSel]{pltltn}} for an application
+in this situation.
+
+Consider \code{\link[BayesVarSel]{Bvs}} for exact
 version obtained enumerating all entertained models (recommended when
 p<20).
 }

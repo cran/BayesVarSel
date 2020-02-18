@@ -31,7 +31,9 @@
 #' include "Null" (the model only with the covariates specified in
 #' \code{fixed.cov}), "Full" (the model defined by \code{formula}), "Random" (a
 #' randomly selected model) and a vector with p (the number of covariates to
-#' select from) zeros and ones defining a model.
+#' select from) zeros and ones defining a model. When p>n the function forces
+#' the init.model to be "Null" (it would not make sense to start in a singular model plus
+#' you expect here a sparse true model).
 #' @param n.burnin Length of burn in, i.e. number of iterations to discard at
 #' the beginning.
 #' @param n.thin Thinning rate. Must be a positive integer.  Set 'n.thin' > 1
@@ -54,23 +56,30 @@
 #' the potential explanatory variables} \item{n }{Number of observations}
 #' \item{p }{Number of explanatory variables to select from} \item{k }{Number
 #' of fixed variables} \item{HPMbin }{The binary expression of the most
-#' probable model found.} \item{inclprob }{A \code{data.frame} with the
+#' probable model found.} \item{inclprob }{A named vector with the
 #' estimates of the inclusion probabilities of all the variables.}
 #' \item{jointinclprob }{A \code{data.frame} with the estimates of the joint
 #' inclusion probabilities of all the variables.} \item{postprobdim }{Estimates
 #' of posterior probabilities of the dimension of the true model.}
 #' \item{modelslogBF}{A matrix with both the binary representation of the
 #' visited models after the burning period and the Bayes factor (log scale) of
-#' that model to the null model.}\item{priorprobs}{A p+1 dimensional vector containing values proportionals
-#' to the prior probability of a model of each dimension (from 0 to p)} \item{call }{The \code{call} to the
-#' function.} \item{method }{\code{gibbs}}
+#' that model to the null model.}\item{priorprobs}{If \code{prior.models}="User" then this vector is stored here. Else, the #' type of prior as defined in \code{prior.models}}\item{call }{The \code{call} to the
+#' function.}
+#' \item{C}{An estimation of the normalizing constant (C=sum Bi Pr(Mi), for Mi in the model space) using the method in George and McCulloch (1997).}
+#' \item{method }{\code{gibbs}}
 #' @author Gonzalo Garcia-Donato and Anabel Forte
 #' @seealso \code{\link[BayesVarSel]{plot.Bvs}} for several plots of the result,
 #' \code{\link[BayesVarSel]{BMAcoeff}} for obtaining model averaged simulations
 #' of regression coefficients and \code{\link[BayesVarSel]{predict.Bvs}} for
-#' predictions.
+#' predictions. 
+#' 
+#' See \code{\link[BayesVarSel]{GibbsBvsF}} if there are factors among the explanatory variables.
+#' 
+#' See \code{\link[BayesVarSel]{pltltn}} for corrections on estimations for the
+#' situation where p>>n. See the help in  \code{\link[BayesVarSel]{pltltn}} for an application
+#' in this situation.
 #'
-#' \code{\link[BayesVarSel]{Bvs}} for exact
+#' Consider \code{\link[BayesVarSel]{Bvs}} for exact
 #' version obtained enumerating all entertained models (recommended when
 #' p<20).
 #' @references Garcia-Donato, G. and Martinez-Beneito, M.A.
@@ -182,6 +191,11 @@ GibbsBvs <-
 
       n <- dim(data)[1]
 
+			#warning about n<p situation
+			if (n < dim(X.full)[2]) {cat("In this dataset n<p and unitary Bayes factors are used for models with k>n.\n")
+				                       init.model="Null"}
+
+
       #the response variable for the C code
       Y <- lmnull$residuals
 
@@ -230,6 +244,25 @@ GibbsBvs <-
       n <- dim(X)[1]
       #check if the number of models to save is correct
     }
+
+    #Check if, among the competing variables, there are factors
+		if (sum(attr(lmfull$terms, "dataClasses")=="factor") & sum(attr(lmfull$terms, "dataClasses")=="factor")-sum(attr(lmnull$terms, "dataClasses")=="factor")>0){
+			cat("--------------\n")
+			cat("The competing variables contain factors, a situation for which we recommend using\n")
+			cat("GibbsBvsF()\n")
+      ANSWER <-
+        readline("Do you want to continue with GibbsBvs()?(y/n) then press enter.\n")
+      while (substr(ANSWER, 1, 1) != "n" &
+             substr(ANSWER, 1, 1) != "y") {
+        ANSWER <- readline("")
+      }
+
+      if (substr(ANSWER, 1, 1) == "n")
+      {
+        return(NULL)
+      }        
+		}
+
 
     #write the data files in the working directory
     write(Y,
@@ -285,14 +318,20 @@ GibbsBvs <-
       if (knull == 1) {
         cat("From those",
             knull,
-            "is fixed and we should select from the remaining",
+            "are fixed and we should select from the remaining",
             p,
             "\n")
       }
-      cat(paste(paste(
-        namesx, collapse = ", ", sep = ""
-      ), "\n", sep = ""))
-    }
+			if (p<50){
+				cat(paste(paste(
+        	namesx, collapse = ", ", sep = ""
+      		), "\n", sep = ""))
+				}
+			else
+			cat(paste(paste(
+      	namesx[1:50], collapse = ", ", sep = ""
+    		), "...\n", sep = ""))
+		}
     cat("The problem has a total of", 2 ^ (p), "competing models\n")
     iter <- n.iter
     cat("Of these,", n.burnin + n.iter, "are sampled with replacement\n")
@@ -301,14 +340,15 @@ GibbsBvs <-
         floor(iter / n.thin),
         "are kept and used to construct the summaries\n")
 
-
+		if (prior.betas=="Robust2"){prior.betas<- "w"}
     #prior for betas:
     pfb <- substr(tolower(prior.betas), 1, 1)
     if (pfb != "g" &&
         pfb != "r" &&
         pfb != "z" &&
         pfb != "l" &&
-        pfb != "f")
+        pfb != "f" &&
+				pfb != "w")
       stop("I am very sorry: prior for betas not supported\n")
     #prior for model space:
     pfms <- substr(tolower(prior.models), 1, 1)
@@ -441,6 +481,45 @@ GibbsBvs <-
         ),
         "ru" = .C(
           "GibbsRobustUser",
+          as.character(""),
+          as.integer(n),
+          as.integer(p),
+          as.integer(49),
+          as.character(wd),
+          as.integer(1),
+          as.double(estim.time),
+          as.integer(knull),
+          as.integer(1),
+          as.integer(seed)
+        ),
+        "wc" = .C(
+          "GibbsRobust2Const",
+          as.character(""),
+          as.integer(n),
+          as.integer(p),
+          as.integer(49),
+          as.character(wd),
+          as.integer(1),
+          as.double(estim.time),
+          as.integer(knull),
+          as.integer(1),
+          as.integer(seed)
+        ),
+        "ws" = .C(
+          "GibbsRobust2SB",
+          as.character(""),
+          as.integer(n),
+          as.integer(p),
+          as.integer(49),
+          as.character(wd),
+          as.integer(1),
+          as.double(estim.time),
+          as.integer(knull),
+          as.integer(1),
+          as.integer(seed)
+        ),
+        "wu" = .C(
+          "GibbsRobust2User",
           as.character(""),
           as.integer(n),
           as.integer(p),
@@ -673,6 +752,45 @@ GibbsBvs <-
         as.integer(n.thin),
         as.integer(seed)
       ),
+      "wc" = .C(
+        "GibbsRobust2Const",
+        as.character(""),
+        as.integer(n),
+        as.integer(p),
+        as.integer(floor(n.iter / n.thin)),
+        as.character(wd),
+        as.integer(n.burnin),
+        as.double(estim.time),
+        as.integer(knull),
+        as.integer(n.thin),
+        as.integer(seed)
+      ),
+      "ws" = .C(
+        "GibbsRobust2SB",
+        as.character(""),
+        as.integer(n),
+        as.integer(p),
+        as.integer(floor(n.iter / n.thin)),
+        as.character(wd),
+        as.integer(n.burnin),
+        as.double(estim.time),
+        as.integer(knull),
+        as.integer(n.thin),
+        as.integer(seed)
+      ),
+      "wu" = .C(
+        "GibbsRobust2User",
+        as.character(""),
+        as.integer(n),
+        as.integer(p),
+        as.integer(floor(n.iter / n.thin)),
+        as.character(wd),
+        as.integer(n.burnin),
+        as.double(estim.time),
+        as.integer(knull),
+        as.integer(n.thin),
+        as.integer(seed)
+      ),
       "lc" = .C(
         "GibbsLiangConst",
         as.character(""),
@@ -845,12 +963,56 @@ GibbsBvs <-
     #rownames(result$betahat)<-namesx
     #names(result$betahat) <- "BetaHat"
     result$call <- match.call()
-    if (pfms == "c" ) priorprobs <- rep(1, p + 1)
-    if (pfms == "s" ) priorprobs <- 1/choose(p,0:p)
+    if (pfms == "c" ) priorprobs <- "Constant"
+    if (pfms == "s" ) priorprobs <- "ScottBerger"
     result$priorprobs <- priorprobs
+
+		result$C<- calculaC(modelslBF, priorprobs, p)
+
     result$method <- "gibbs"
     class(result)<- "Bvs"
     result
 
 
   }
+
+
+#A function to obtain an estimate of the normalizing constant
+#based on the method by George&McCulloch(1997)
+#from the output of Gibbs
+#not to be exported as is expected to be used only within the GibbsBvs
+calculaC<- function(modelslBF, priorprobs, p){
+	n<- dim(modelslBF)[1]
+	#The method of George&McCulloch uses to sets. Here these are obtained as
+	#subsets of the MCMC sample of length K
+	K<- round(n/2)
+	Aset<- sample(x=1:n, size=K, replace=F)
+	Bset<- (1:n)[-Aset]
+	#log-Bayes factors of the models in A
+	lBFAset<- modelslBF[Aset, "logBFi0"]
+	#dimension of these models
+	dimAset<- rowSums(modelslBF[Aset, -dim(modelslBF)[2]])
+
+	#Remove repetitions to have finally the definition of A
+	notdup<- !duplicated(lBFAset)
+	lBFAset<- unique(lBFAset)
+	dimAset<- dimAset[notdup]
+  
+	#Prior probabilities of the models in A (suming one is because the first position is occupied by dimension=0)
+	if (priorprobs=="ScottBerger") lpriorAset<- -log(p+1)-lchoose(p, dimAset)
+	if (priorprobs=="Constant") lpriorAset<- -p*log(2)
+	if (!is.character(priorprobs)) {
+		dimnotzero<- which(priorprobs>0)
+		priorAset<- priorprobs[dimAset+1]/sum(exp(log(priorprobs[dimnotzero])+lchoose(p, dimnotzero-1)))
+		lpriorAset<- log(priorAset)
+	}	
+
+	#The sum of Bi0*Pr(Mi) (g(A) in G&McC notation)
+	gAset<- sum(exp(lBFAset+lpriorAset))
+	#How many of the models in Bset are in A?
+	sumIA<- sum(modelslBF[Bset,"logBFi0"]%in%modelslBF[Aset,"logBFi0"])
+
+	#The estimation of the normalizing constant is then: (1/C in G&McC's notation)
+	C<- gAset*K/sumIA
+	return(C)
+}
