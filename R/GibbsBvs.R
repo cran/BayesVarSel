@@ -21,9 +21,9 @@
 #' It should be nested in the full model. By default, the null model is defined
 #' to be the one with just the intercept.
 #' @param prior.betas Prior distribution for regression parameters within each
-#' model. Possible choices include "Robust", "Liangetal", "gZellner",
-#' "ZellnerSiow" and "FLS" (see details).
-#' @param prior.models Prior distribution over the model space. Possible
+#' model (to be literally specified). Possible choices include "Robust", "Robust.G", "Liangetal", "gZellner",
+#' "ZellnerSiow", "FLS", "intrinsic.MGC" and "IHG" (see details).
+#' @param prior.models Prior distribution over the model space (to be literally specified). Possible
 #' choices are "Constant", "ScottBerger" and "User" (see details).
 #' @param n.iter The total number of iterations performed after the burn in
 #' process.
@@ -31,9 +31,9 @@
 #' include "Null" (the model only with the covariates specified in
 #' \code{fixed.cov}), "Full" (the model defined by \code{formula}), "Random" (a
 #' randomly selected model) and a vector with p (the number of covariates to
-#' select from) zeros and ones defining a model. When p>n the function forces
-#' the init.model to be "Null" (it would not make sense to start in a singular model plus
-#' you expect here a sparse true model).
+#' select from) zeros and ones defining a model. When p>n the dimension of the
+#' init.model must be smaller than n. Otherwise the function produces
+#' an error.
 #' @param n.burnin Length of burn in, i.e. number of iterations to discard at
 #' the beginning.
 #' @param n.thin Thinning rate. Must be a positive integer.  Set 'n.thin' > 1
@@ -67,6 +67,9 @@
 #' function.}
 #' \item{C}{An estimation of the normalizing constant (C=sum Bi Pr(Mi), for Mi in the model space) using the method in George and McCulloch (1997).}
 #' \item{method }{\code{gibbs}}
+#' \item{prior.betas}{prior.betas}
+#' \item{prior.models}{prior.models}
+#' \item{priorprobs}{priorprobs}
 #' @author Gonzalo Garcia-Donato and Anabel Forte
 #' @seealso \code{\link[BayesVarSel]{plot.Bvs}} for several plots of the result,
 #' \code{\link[BayesVarSel]{BMAcoeff}} for obtaining model averaged simulations
@@ -191,11 +194,6 @@ GibbsBvs <-
 
       n <- dim(data)[1]
 
-			#warning about n<p situation
-			if (n < dim(X.full)[2]) {cat("In this dataset n<p and unitary Bayes factors are used for models with k>n.\n")
-				                       init.model="Null"}
-
-
       #the response variable for the C code
       Y <- lmnull$residuals
 
@@ -298,6 +296,14 @@ GibbsBvs <-
       }
     }
 
+    #warning about n<p situation
+    if (n < dim(X.full)[2]) {cat("In this dataset n<p and unitary Bayes factors are used for models with k>n.\n")
+      if (sum(init.model)>n) {stop("The initial model is rank-defficient. Please specify one which is full rank (eg: Null model)")}
+    }
+
+
+
+
     write(
       init.model,
       ncolumns = 1,
@@ -340,64 +346,11 @@ GibbsBvs <-
         floor(iter / n.thin),
         "are kept and used to construct the summaries\n")
 
-		if (prior.betas=="Robust2"){prior.betas<- "w"}
-    #prior for betas:
-    pfb <- substr(tolower(prior.betas), 1, 1)
-    if (pfb != "g" &&
-        pfb != "r" &&
-        pfb != "z" &&
-        pfb != "l" &&
-        pfb != "f" &&
-				pfb != "w")
-      stop("I am very sorry: prior for betas not supported\n")
-    #prior for model space:
-    pfms <- substr(tolower(prior.models), 1, 1)
-    if (pfms != "c" &&
-        pfms != "s" &&
-        pfms != "u")
-      stop("I am very sorry: prior for model space not valid\n")
-    if (pfms == "u" &&
-        is.null(priorprobs)) {
-      stop("A valid vector of prior probabilities must be provided\n")
-    }
-    if (pfms == "u" &&
-        length(priorprobs) != (p + 1)) {
-      stop("Vector of prior probabilities with incorrect length\n")
-    }
-    if (pfms == "u" &&
-        sum(priorprobs < 0) > 0) {
-      stop("Prior probabilities must be positive\n")
-    }
-    if (pfms == "u" &&
-        priorprobs[1] == 0) {
-      stop(
-        "Vector of prior probabilities not valid: All the theory here implemented works with the implicit assumption that the null model could be the true model\n"
-      )
-    }
-    if (pfms == "u" &&
-        priorprobs[sum(init.model) + 1] == 0) {
-      stop("The initial model has zero prior probability\n")
-    }
-    if (pfms == "u") {
-      #The zero here added is for C compatibility
-      write(
-        priorprobs,
-        ncolumns = 1,
-        file = paste(wd, "/priorprobs.txt", sep = "")
-      )
-    }
-
-    #Note: priorprobs.txt is a file that is needed only by the "User" routine. Nevertheless, in order
-    #to mantain a common unified version the source files of other routines also reads this file
-    #although they do not use. Because of this we create this file anyway.
-    if (pfms == "c" | pfms == "s") {
-      priorprobs <- rep(0, p + 1)
-      write(
-        priorprobs,
-        ncolumns = 1,
-        file = paste(wd, "/priorprobs.txt", sep = "")
-      )
-    }
+	#prior for betas: (#pfb will contain the internal representation of the prior.betas argument)
+	pfb <- check.prior.betas(prior.betas) 
+	#prior for model space: (#pfms will contain the internal representation of the prior.models argument)
+	#this function also writes the vector of prior probabilities for usage of C functions
+	pfms <- check.prior.modelspace(prior.models, priorprobs, p, wd)
 
     method <- paste(pfb, pfms, sep = "")
 
@@ -647,8 +600,125 @@ GibbsBvs <-
           as.integer(knull),
           as.integer(1),
           as.integer(seed)
+        ),
+        "ic" = .C(
+          "GibbsintrinsicConst",
+          as.character(""),
+          as.integer(n),
+          as.integer(p),
+          as.integer(49),
+          as.character(wd),
+          as.integer(1),
+          as.double(estim.time),
+          as.integer(knull),
+          as.integer(1),
+          as.integer(seed)
+        ),
+        "is" = .C(
+          "GibbsintrinsicSB",
+          as.character(""),
+          as.integer(n),
+          as.integer(p),
+          as.integer(49),
+          as.character(wd),
+          as.integer(1),
+          as.double(estim.time),
+          as.integer(knull),
+          as.integer(1),
+          as.integer(seed)
+        ),
+        "iu" = .C(
+          "GibbsintrinsicUser",
+          as.character(""),
+          as.integer(n),
+          as.integer(p),
+          as.integer(49),
+          as.character(wd),
+          as.integer(1),
+          as.double(estim.time),
+          as.integer(knull),
+          as.integer(1),
+          as.integer(seed)
+        ),
+        "xc" = .C(
+          "GibbsgeointrinsicConst",
+          as.character(""),
+          as.integer(n),
+          as.integer(p),
+          as.integer(49),
+          as.character(wd),
+          as.integer(1),
+          as.double(estim.time),
+          as.integer(knull),
+          as.integer(1),
+          as.integer(seed)
+        ),
+        "xs" = .C(
+          "GibbsgeointrinsicSB",
+          as.character(""),
+          as.integer(n),
+          as.integer(p),
+          as.integer(49),
+          as.character(wd),
+          as.integer(1),
+          as.double(estim.time),
+          as.integer(knull),
+          as.integer(1),
+          as.integer(seed)
+        ),
+        "xu" = .C(
+          "GibbsgeointrinsicUser",
+          as.character(""),
+          as.integer(n),
+          as.integer(p),
+          as.integer(49),
+          as.character(wd),
+          as.integer(1),
+          as.double(estim.time),
+          as.integer(knull),
+          as.integer(1),
+          as.integer(seed)
+        ),
+        "yc" = .C(
+          "Gibbsgeointrinsic2Const",
+          as.character(""),
+          as.integer(n),
+          as.integer(p),
+          as.integer(49),
+          as.character(wd),
+          as.integer(1),
+          as.double(estim.time),
+          as.integer(knull),
+          as.integer(1),
+          as.integer(seed)
+        ),
+        "ys" = .C(
+          "Gibbsgeointrinsic2SB",
+          as.character(""),
+          as.integer(n),
+          as.integer(p),
+          as.integer(49),
+          as.character(wd),
+          as.integer(1),
+          as.double(estim.time),
+          as.integer(knull),
+          as.integer(1),
+          as.integer(seed)
+        ),
+        "yu" = .C(
+          "Gibbsgeointrinsic2User",
+          as.character(""),
+          as.integer(n),
+          as.integer(p),
+          as.integer(49),
+          as.character(wd),
+          as.integer(1),
+          as.double(estim.time),
+          as.integer(knull),
+          as.integer(1),
+          as.integer(seed)
         )
-      )
+	  )
 
       estim.time <- result[[7]] * (n.burnin + n.iter) / (60 * 50)
       cat("The problem would take ",
@@ -907,6 +977,123 @@ GibbsBvs <-
         as.integer(knull),
         as.integer(n.thin),
         as.integer(seed)
+      ),
+      "ic" = .C(
+        "GibbsintrinsicConst",
+        as.character(""),
+        as.integer(n),
+        as.integer(p),
+        as.integer(floor(n.iter / n.thin)),
+        as.character(wd),
+        as.integer(n.burnin),
+        as.double(estim.time),
+        as.integer(knull),
+        as.integer(n.thin),
+        as.integer(seed)
+      ),
+      "is" = .C(
+        "GibbsintrinsicSB",
+        as.character(""),
+        as.integer(n),
+        as.integer(p),
+        as.integer(floor(n.iter / n.thin)),
+        as.character(wd),
+        as.integer(n.burnin),
+        as.double(estim.time),
+        as.integer(knull),
+        as.integer(n.thin),
+        as.integer(seed)
+      ),
+      "iu" = .C(
+        "GibbsintrinsicUser",
+        as.character(""),
+        as.integer(n),
+        as.integer(p),
+        as.integer(floor(n.iter / n.thin)),
+        as.character(wd),
+        as.integer(n.burnin),
+        as.double(estim.time),
+        as.integer(knull),
+        as.integer(n.thin),
+        as.integer(seed)
+      ),
+      "xc" = .C(
+        "GibbsgeointrinsicConst",
+        as.character(""),
+        as.integer(n),
+        as.integer(p),
+        as.integer(floor(n.iter / n.thin)),
+        as.character(wd),
+        as.integer(n.burnin),
+        as.double(estim.time),
+        as.integer(knull),
+        as.integer(n.thin),
+        as.integer(seed)
+      ),
+      "xs" = .C(
+        "GibbsgeointrinsicSB",
+        as.character(""),
+        as.integer(n),
+        as.integer(p),
+        as.integer(floor(n.iter / n.thin)),
+        as.character(wd),
+        as.integer(n.burnin),
+        as.double(estim.time),
+        as.integer(knull),
+        as.integer(n.thin),
+        as.integer(seed)
+      ),
+      "xu" = .C(
+        "GibbsgeointrinsicUser",
+        as.character(""),
+        as.integer(n),
+        as.integer(p),
+        as.integer(floor(n.iter / n.thin)),
+        as.character(wd),
+        as.integer(n.burnin),
+        as.double(estim.time),
+        as.integer(knull),
+        as.integer(n.thin),
+        as.integer(seed)
+      ),
+      "yc" = .C(
+        "Gibbsgeointrinsic2Const",
+        as.character(""),
+        as.integer(n),
+        as.integer(p),
+        as.integer(floor(n.iter / n.thin)),
+        as.character(wd),
+        as.integer(n.burnin),
+        as.double(estim.time),
+        as.integer(knull),
+        as.integer(n.thin),
+        as.integer(seed)
+      ),
+      "ys" = .C(
+        "Gibbsgeointrinsic2SB",
+        as.character(""),
+        as.integer(n),
+        as.integer(p),
+        as.integer(floor(n.iter / n.thin)),
+        as.character(wd),
+        as.integer(n.burnin),
+        as.double(estim.time),
+        as.integer(knull),
+        as.integer(n.thin),
+        as.integer(seed)
+      ),
+      "yu" = .C(
+        "Gibbsgeointrinsic2User",
+        as.character(""),
+        as.integer(n),
+        as.integer(p),
+        as.integer(floor(n.iter / n.thin)),
+        as.character(wd),
+        as.integer(n.burnin),
+        as.double(estim.time),
+        as.integer(knull),
+        as.integer(n.thin),
+        as.integer(seed)
       )
     )
 
@@ -967,7 +1154,11 @@ GibbsBvs <-
     if (pfms == "s" ) priorprobs <- "ScottBerger"
     result$priorprobs <- priorprobs
 
-		result$C<- calculaC(modelslBF, priorprobs, p)
+	result$C<- calculaC(modelslBF, priorprobs, p)
+
+	result$prior.betas<- prior.betas	
+	result$prior.models<- prior.models
+	result$priorprobs<- priorprobs
 
     result$method <- "gibbs"
     class(result)<- "Bvs"

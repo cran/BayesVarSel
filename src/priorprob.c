@@ -40,9 +40,9 @@ double SBSBpriorprob(gsl_vector * indexfr, gsl_vector * positionsx, gsl_matrix *
   for (int i = 0; i < nofvars; i++)
    {
 		 suma=0.0; j=0;
-		 while((suma<gsl_vector_get(levels, i)) & (j<p)){
+		 while((suma<gsl_vector_get(levels, i))  && (j<p)){
        suma=suma+gsl_matrix_get(positions,i,j)*gsl_vector_get(indexfr,j);
-			 			 	if ((suma==gsl_vector_get(levels, i)) & (gsl_vector_get(isfactor,i)==1.0)){
+			 			 	if ((suma==gsl_vector_get(levels, i))  && (gsl_vector_get(isfactor,i)==1.0)){
 								gsl_vector_set(indexfr, j, 0);
 			 	}
 			 j++;
@@ -67,6 +67,7 @@ double SBSBpriorprob(gsl_vector * indexfr, gsl_vector * positionsx, gsl_matrix *
 	PrMg=exp(-PrMg);
 
 	//Rprintf("Prior probability is %.20f \n", PrMg);
+	gsl_vector_free(v);
 	return(PrMg);
 
 }
@@ -88,9 +89,9 @@ double ConstConstpriorprob(gsl_vector * indexfr, gsl_vector * positionsx, gsl_ma
   for (int i = 0; i < nofvars; i++)
    {
 		 suma=0.0; j=0;
-		 while((suma<gsl_vector_get(levels, i)) & (j<p)){
+		 while((suma<gsl_vector_get(levels, i))  && (j<p)){
        suma=suma+gsl_matrix_get(positions,i,j)*gsl_vector_get(indexfr,j);
-			 			 	if ((suma==gsl_vector_get(levels, i)) & (gsl_vector_get(isfactor,i)==1.0)){
+			 			 	if ((suma==gsl_vector_get(levels, i))  && (gsl_vector_get(isfactor,i)==1.0)){
 								gsl_vector_set(indexfr, j, 0);
 			 	}
 			 j++;
@@ -115,6 +116,7 @@ double ConstConstpriorprob(gsl_vector * indexfr, gsl_vector * positionsx, gsl_ma
 	PrMg=exp(-PrMg);
 
 	//Rprintf("Prior probability is %.20f \n", PrMg);
+	gsl_vector_free(v);
 	return(PrMg);
 
 }
@@ -136,9 +138,9 @@ double SBConstpriorprob(gsl_vector * indexfr, gsl_vector * positionsx, gsl_matri
   for (int i = 0; i < nofvars; i++)
    {
 		 suma=0.0; j=0;
-		 while((suma<gsl_vector_get(levels, i)) & (j<p)){
+		 while((suma<gsl_vector_get(levels, i))  && (j<p)){
        suma=suma+gsl_matrix_get(positions,i,j)*gsl_vector_get(indexfr,j);
-			 			 	if ((suma==gsl_vector_get(levels, i)) & (gsl_vector_get(isfactor,i)==1.0)){
+			 			 	if ((suma==gsl_vector_get(levels, i))  && (gsl_vector_get(isfactor,i)==1.0)){
 								gsl_vector_set(indexfr, j, 0);
 			 	}
 			 j++;
@@ -160,6 +162,7 @@ double SBConstpriorprob(gsl_vector * indexfr, gsl_vector * positionsx, gsl_matri
 
 	PrMg=exp(-PrMg);
 
+	gsl_vector_free(v);
 	return(PrMg);
 
 }
