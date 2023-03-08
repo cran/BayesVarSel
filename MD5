@@ -1,4 +1,4 @@
-c577414162afa89a1a785765370ad4cb *DESCRIPTION
+24c16d4f591db0239476f0632eab8529 *DESCRIPTION
 14a4751aafa2d2f6967dd6bbca0ce856 *NAMESPACE
 678fb8a994ac93e7197f5f2f4ea4ac9f *NEWS.md
 a43b124dde2734885224af76c9e822a0 *R/BMAcoeff.R
@@ -10,7 +10,7 @@ d47c9eadf27a3b9ba982400ab4a08f8f *R/Jointness.R
 59f1a18c2a94ed136111b542a278d2a7 *R/auxfuncs4BvsF.R
 a33dab921ebb9ee3282cac16c0d0ccc9 *R/histBMA.R
 ed288f85427c481177ea970a1534b807 *R/package.R
-9ea3677bd06915549802aed95ab75e45 *R/plotBvs.R
+00dd44187f168df072919f87a1dda019 *R/plotBvs.R
 bf6b19c782ebd3db858d83e7b1f1e3f4 *R/pltltn.R
 46fd2331b803d395babe5d820cb100e5 *R/predictBvs.R
 249ffc4f56c5c5ec7cbfa903e1ee47b4 *data/Hald.rda
@@ -19,7 +19,7 @@ aca1353a0aade990d0bd363a7f64bc57 *data/Ozone35.rda
 319225a094f9679c6e87d4f118e0a020 *data/SDM.rdata
 1dbfa46596e6991d0da8dcc0d2de8bd3 *demo/00Index
 3a245abbc040a1959cdfd8d842964fcd *demo/BayesVarSel.Hald.R
-54980fc5b785a5ee615d93117b81717d *inst/CITATION
+e380cb6922d59245add758965534b6ed *inst/CITATION
 968abd0e745605023ce36439b40e5de6 *man/BMAcoeff.Rd
 8b49cf8fac47f76eaa00b8ebd386c632 *man/BayesVarSel-package.Rd
 891f652d2de0ac59424d44466764f280 *man/Btest.Rd
@@ -46,11 +46,11 @@ bd0b6fe889062ed1e3265b4693208cca *src/Gibbsauxiliaryfuncs.c
 79a0da5f7e69e5ae5aa746f88fabbbde *src/Makevars
 76733f22bcbdd8cf04bcaa7ec369fcc2 *src/allBF.c
 c8a1752c856c83874a3717e8404bc1ee *src/allBF.h
-54badc2f6208a195401cd14a3679b04c *src/auxiliaryfuncs.c
-f84a87f826ee9c955686a77600fbc36e *src/auxiliaryfuncs.h
-c6621dfd1dca12d783a6694b8c4713f9 *src/main.c
-f403f80b129826a5433a4d6396896441 *src/mainGibbs.c
-1fedd537556521315fdf612c8d9d74a2 *src/mainGibbsF.c
+2fe8f79daecfadd2a87ed31ddb9e72a5 *src/auxiliaryfuncs.c
+5679a23e745ac002450609bb1feb6cb8 *src/auxiliaryfuncs.h
+072a37518445a3f8e5ddcb0426b8736e *src/main.c
+1f721f3d52c70e14cae038f22dddca2b *src/mainGibbs.c
+4a1a2ba57772e20bbbefd61ec3fc7dd2 *src/mainGibbsF.c
 a4bf062fd960f0af28be3e2703590c59 *src/mainSingle.c
 5c3d9341ed479a0c99f90ac32d10a39c *src/priorprob.c
 41e9674fcb015c8b4344c644567f0471 *src/priorprob.h
