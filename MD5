@@ -1,10 +1,10 @@
-24c16d4f591db0239476f0632eab8529 *DESCRIPTION
+6d4685436d731f2746a2255c24f2372a *DESCRIPTION
 14a4751aafa2d2f6967dd6bbca0ce856 *NAMESPACE
-678fb8a994ac93e7197f5f2f4ea4ac9f *NEWS.md
+af5db6a9ecf10d26ba32583a7aa6d6a7 *NEWS.md
 a43b124dde2734885224af76c9e822a0 *R/BMAcoeff.R
 b7d0d0e0d6b88934e0cb2ab03d3238c0 *R/Btest.R
 df21939faddf12e3e8ff03e0ffada397 *R/Bvs.R
-cab7c74815e277e0efd633bae494823a *R/GibbsBvs.R
+b6cf73000c354f18324a220a7e1ba124 *R/GibbsBvs.R
 8e61dd765efa36ee30b958eefb186f7b *R/GibbsBvsF.R
 d47c9eadf27a3b9ba982400ab4a08f8f *R/Jointness.R
 59f1a18c2a94ed136111b542a278d2a7 *R/auxfuncs4BvsF.R
@@ -48,9 +48,9 @@ bd0b6fe889062ed1e3265b4693208cca *src/Gibbsauxiliaryfuncs.c
 c8a1752c856c83874a3717e8404bc1ee *src/allBF.h
 2fe8f79daecfadd2a87ed31ddb9e72a5 *src/auxiliaryfuncs.c
 5679a23e745ac002450609bb1feb6cb8 *src/auxiliaryfuncs.h
-072a37518445a3f8e5ddcb0426b8736e *src/main.c
-1f721f3d52c70e14cae038f22dddca2b *src/mainGibbs.c
-4a1a2ba57772e20bbbefd61ec3fc7dd2 *src/mainGibbsF.c
+6401da73062f562f752793c773e85ebd *src/main.c
+68f54ebfd568c2637c12699768cefc05 *src/mainGibbs.c
+b3d065477af523591c5d5574b522a912 *src/mainGibbsF.c
 a4bf062fd960f0af28be3e2703590c59 *src/mainSingle.c
-5c3d9341ed479a0c99f90ac32d10a39c *src/priorprob.c
+e5eafa0cb4f558da92c691bb78157013 *src/priorprob.c
 41e9674fcb015c8b4344c644567f0471 *src/priorprob.h
